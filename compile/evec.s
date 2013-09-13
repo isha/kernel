@@ -1,0 +1,336 @@
+	.file	"evec.c"
+	.text
+	.globl	initevec
+	.type	initevec, @function
+initevec:
+.LFB0:
+	.cfi_startproc
+	pushl	%ebp
+	.cfi_def_cfa_offset 8
+	.cfi_offset 5, -8
+	movl	%esp, %ebp
+	.cfi_def_cfa_register 5
+	subl	$40, %esp
+	movl	$2048, 8(%esp)
+	movl	$0, 4(%esp)
+	movl	$idt, (%esp)
+	call	memset
+	movl	$0, -12(%ebp)
+	jmp	.L2
+.L3:
+	movl	-12(%ebp), %eax
+	movl	defevec(,%eax,4), %eax
+	movl	%eax, %edx
+	movl	-12(%ebp), %eax
+	movl	%edx, 4(%esp)
+	movl	%eax, (%esp)
+	call	set_evec
+	incl	-12(%ebp)
+.L2:
+	cmpl	$47, -12(%ebp)
+	jle	.L3
+	call	lidt
+	call	init8259
+	leave
+	.cfi_restore 5
+	.cfi_def_cfa 4, 4
+	ret
+	.cfi_endproc
+.LFE0:
+	.size	initevec, .-initevec
+	.globl	set_evec
+	.type	set_evec, @function
+set_evec:
+.LFB1:
+	.cfi_startproc
+	pushl	%ebp
+	.cfi_def_cfa_offset 8
+	.cfi_offset 5, -8
+	movl	%esp, %ebp
+	.cfi_def_cfa_register 5
+	subl	$16, %esp
+	movl	8(%ebp), %eax
+	sall	$3, %eax
+	addl	$idt, %eax
+	movl	%eax, -4(%ebp)
+	movl	12(%ebp), %eax
+	movl	-4(%ebp), %edx
+	movw	%ax, (%edx)
+	movl	-4(%ebp), %eax
+	movw	$8, 2(%eax)
+	movl	-4(%ebp), %eax
+	movb	4(%eax), %dl
+	andl	$31, %edx
+	movb	%dl, 4(%eax)
+	movl	-4(%ebp), %eax
+	movb	5(%eax), %dl
+	andl	$-32, %edx
+	orl	$15, %edx
+	movb	%dl, 5(%eax)
+	movl	-4(%ebp), %eax
+	movb	5(%eax), %dl
+	andl	$-97, %edx
+	movb	%dl, 5(%eax)
+	movl	-4(%ebp), %eax
+	movb	5(%eax), %dl
+	orl	$-128, %edx
+	movb	%dl, 5(%eax)
+	movl	12(%ebp), %eax
+	shrl	$16, %eax
+	movl	-4(%ebp), %edx
+	movw	%ax, 6(%edx)
+	leave
+	.cfi_restore 5
+	.cfi_def_cfa 4, 4
+	ret
+	.cfi_endproc
+.LFE1:
+	.size	set_evec, .-set_evec
+	.globl	inames
+	.section	.rodata
+.LC0:
+	.string	"divided by zero"
+.LC1:
+	.string	"debug exception"
+.LC2:
+	.string	"NMI interrupt"
+.LC3:
+	.string	"breakpoint"
+.LC4:
+	.string	"overflow"
+.LC5:
+	.string	"bounds check failed"
+.LC6:
+	.string	"invalid opcode"
+.LC7:
+	.string	"coprocessor not available"
+.LC8:
+	.string	"double fault"
+.LC9:
+	.string	"coprocessor segment overrun"
+.LC10:
+	.string	"invalid TSS"
+.LC11:
+	.string	"segment not present"
+.LC12:
+	.string	"stack fault"
+.LC13:
+	.string	"general protection violation"
+.LC14:
+	.string	"page fault"
+.LC15:
+	.string	"coprocessor error"
+	.data
+	.align 32
+	.type	inames, @object
+	.size	inames, 68
+inames:
+	.long	.LC0
+	.long	.LC1
+	.long	.LC2
+	.long	.LC3
+	.long	.LC4
+	.long	.LC5
+	.long	.LC6
+	.long	.LC7
+	.long	.LC8
+	.long	.LC9
+	.long	.LC10
+	.long	.LC11
+	.long	.LC12
+	.long	.LC13
+	.long	.LC14
+	.long	.LC15
+	.zero	4
+	.local	fp
+	.comm	fp,4,4
+	.section	.rodata
+.LC16:
+	.string	"trap!\n"
+.LC17:
+	.string	"exception %d (%s)\n"
+.LC18:
+	.string	"exception %d\n"
+.LC19:
+	.string	"eflags %X "
+.LC20:
+	.string	"eip %X "
+.LC21:
+	.string	"error code %08x (%u)\n"
+.LC22:
+	.string	"register dump:\n"
+.LC23:
+	.string	"eax %08X (%u)\n"
+.LC24:
+	.string	"ecx %08X (%u)\n"
+.LC25:
+	.string	"edx %08X (%u)\n"
+.LC26:
+	.string	"ebx %08X (%u)\n"
+.LC27:
+	.string	"esp %08X (%u)\n"
+.LC28:
+	.string	"ebp %08X (%u)\n"
+.LC29:
+	.string	"esi %08X (%u)\n"
+.LC30:
+	.string	"edi %08X (%u)\n"
+.LC31:
+	.string	"\nHalting.....\n"
+	.text
+	.globl	trap
+	.type	trap, @function
+trap:
+.LFB2:
+	.cfi_startproc
+	pushl	%ebp
+	.cfi_def_cfa_offset 8
+	.cfi_offset 5, -8
+	movl	%esp, %ebp
+	.cfi_def_cfa_register 5
+	subl	$40, %esp
+	call	disable
+#APP
+# 84 "../c/evec.c" 1
+	movl	%ebp,fp
+# 0 "" 2
+#NO_APP
+	movl	fp, %eax
+	addl	$60, %eax
+	movl	%eax, -12(%ebp)
+	movl	$.LC16, (%esp)
+	call	kprintf
+	cmpl	$15, 8(%ebp)
+	jg	.L6
+	movl	8(%ebp), %eax
+	movl	inames(,%eax,4), %eax
+	movl	%eax, 8(%esp)
+	movl	8(%ebp), %eax
+	movl	%eax, 4(%esp)
+	movl	$.LC17, (%esp)
+	call	kprintf
+	jmp	.L7
+.L6:
+	movl	8(%ebp), %eax
+	movl	%eax, 4(%esp)
+	movl	$.LC18, (%esp)
+	call	kprintf
+.L7:
+	movl	-12(%ebp), %eax
+	movl	(%eax), %eax
+	subl	$4, -12(%ebp)
+	movl	%eax, 4(%esp)
+	movl	$.LC19, (%esp)
+	call	kprintf
+	subl	$4, -12(%ebp)
+	movl	-12(%ebp), %eax
+	movl	(%eax), %eax
+	movl	%eax, 4(%esp)
+	movl	$.LC20, (%esp)
+	call	kprintf
+	subl	$4, -12(%ebp)
+	cmpl	$8, 8(%ebp)
+	je	.L8
+	cmpl	$9, 8(%ebp)
+	jle	.L9
+	cmpl	$14, 8(%ebp)
+	jg	.L9
+.L8:
+	movl	-12(%ebp), %eax
+	movl	(%eax), %edx
+	movl	-12(%ebp), %eax
+	movl	(%eax), %eax
+	movl	%edx, 8(%esp)
+	movl	%eax, 4(%esp)
+	movl	$.LC21, (%esp)
+	call	kprintf
+	subl	$4, -12(%ebp)
+.L9:
+	subl	$4, -12(%ebp)
+	movl	$.LC22, (%esp)
+	call	kprintf
+	movl	-12(%ebp), %eax
+	movl	(%eax), %edx
+	movl	-12(%ebp), %eax
+	movl	(%eax), %eax
+	movl	%edx, 8(%esp)
+	movl	%eax, 4(%esp)
+	movl	$.LC23, (%esp)
+	call	kprintf
+	subl	$4, -12(%ebp)
+	movl	-12(%ebp), %eax
+	movl	(%eax), %edx
+	movl	-12(%ebp), %eax
+	movl	(%eax), %eax
+	movl	%edx, 8(%esp)
+	movl	%eax, 4(%esp)
+	movl	$.LC24, (%esp)
+	call	kprintf
+	subl	$4, -12(%ebp)
+	movl	-12(%ebp), %eax
+	movl	(%eax), %edx
+	movl	-12(%ebp), %eax
+	movl	(%eax), %eax
+	movl	%edx, 8(%esp)
+	movl	%eax, 4(%esp)
+	movl	$.LC25, (%esp)
+	call	kprintf
+	subl	$4, -12(%ebp)
+	movl	-12(%ebp), %eax
+	movl	(%eax), %edx
+	movl	-12(%ebp), %eax
+	movl	(%eax), %eax
+	movl	%edx, 8(%esp)
+	movl	%eax, 4(%esp)
+	movl	$.LC26, (%esp)
+	call	kprintf
+	subl	$4, -12(%ebp)
+	movl	-12(%ebp), %eax
+	movl	(%eax), %edx
+	movl	-12(%ebp), %eax
+	movl	(%eax), %eax
+	movl	%edx, 8(%esp)
+	movl	%eax, 4(%esp)
+	movl	$.LC27, (%esp)
+	call	kprintf
+	subl	$4, -12(%ebp)
+	movl	-12(%ebp), %eax
+	movl	(%eax), %edx
+	movl	-12(%ebp), %eax
+	movl	(%eax), %eax
+	movl	%edx, 8(%esp)
+	movl	%eax, 4(%esp)
+	movl	$.LC28, (%esp)
+	call	kprintf
+	movl	-12(%ebp), %eax
+	movl	%eax, fp
+	subl	$4, -12(%ebp)
+	movl	-12(%ebp), %eax
+	movl	(%eax), %edx
+	movl	-12(%ebp), %eax
+	movl	(%eax), %eax
+	movl	%edx, 8(%esp)
+	movl	%eax, 4(%esp)
+	movl	$.LC29, (%esp)
+	call	kprintf
+	subl	$4, -12(%ebp)
+	movl	-12(%ebp), %eax
+	movl	(%eax), %edx
+	movl	-12(%ebp), %eax
+	movl	(%eax), %eax
+	movl	%edx, 8(%esp)
+	movl	%eax, 4(%esp)
+	movl	$.LC30, (%esp)
+	call	kprintf
+	subl	$4, -12(%ebp)
+	movl	$.LC31, (%esp)
+	call	kprintf
+.L10:
+	jmp	.L10
+	.cfi_endproc
+.LFE2:
+	.size	trap, .-trap
+	.ident	"GCC: (SUSE Linux) 4.6.2"
+	.section	.comment.SUSE.OPTs,"MS",@progbits,1
+	.string	"ospWg"
+	.section	.note.GNU-stack,"",@progbits
