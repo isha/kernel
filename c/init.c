@@ -25,10 +25,27 @@ extern char	*maxaddr;	/* max memory address (set in i386.c)	*/
  */
 void initproc( void )				/* The beginning */
 {
-	kprintf( "\n\nCPSC 415, 2013W1 \n32 Bit Xeros 1.1\nLocated at: %x to %x\n", &entry, &end ); 
+	kprintf( "\n\nCPSC 415, 2013W1\nSolution Kernel\n32 Bit Xeros 1.1\nLocated at: %x to %x\n", &entry, &end ); 
 
         /* Your code goes here */
 
+        kprintf("Max addr is %d %x\n", maxaddr, maxaddr);
+
+        kmeminit();
+        kprintf("memory inited\n");
+
+        dispatchinit();
+        kprintf("dispatcher inited\n");
+  
+        contextinit();
+        kprintf("context inited\n");
+
+        create( root, PROC_STACK );
+        kprintf("create inited\n");
+  
+        dispatch();
+  
+        kprintf("Returned to init, you should never get here!\n");
 
         /* This code should never be reached after you are done */
 	for(;;) ; /* loop forever */

@@ -31,3 +31,76 @@ void init8259(void);
 void disable(void);
 void outb(unsigned int, unsigned char);
 unsigned char inb(unsigned int);
+
+extern void kmeminit(void);
+extern void *kmalloc(int size);
+extern void kfree(void *ptr);
+
+#define MAX_PROC        64
+#define KERNEL_INT      80
+#define PROC_STACK      (4096 * 4)
+
+#define STATE_STOPPED   0
+#define STATE_READY     1
+
+#define SYS_STOP        0
+#define SYS_YIELD       1
+#define SYS_CREATE      2
+#define SYS_TIMER       3
+
+typedef void    (*funcptr)(void);
+
+typedef struct struct_pcb pcb;
+struct struct_pcb {
+    long        esp;
+    pcb         *next;
+    int         state;
+    unsigned int pid;
+    int         ret;
+    long        args;
+};
+
+extern pcb     proctab[MAX_PROC];
+#pragma pack(1)
+
+typedef struct context_frame {
+  unsigned int        edi;
+  unsigned int        esi;
+  unsigned int        ebp;
+  unsigned int        esp;
+  unsigned int        ebx;
+  unsigned int        edx;
+  unsigned int        ecx;
+  unsigned int        eax;
+  unsigned int        iret_eip;
+  unsigned int        iret_cs;
+  unsigned int        eflags;
+  unsigned int        stackSlots[0];
+} context_frame;
+
+extern pcb      proctab[MAX_PROC];
+
+extern unsigned short getCS(void);
+extern void     kmeminit( void );
+extern void     *kmalloc( int size );
+extern void     dispatch( void );
+extern void     dispatchinit( void );
+extern void     ready( pcb *p );
+extern pcb      *next( void );
+extern void     contextinit( void );
+extern int      contextswitch( pcb *p );
+extern int      create( funcptr fp, int stack );
+extern void     set_evec(unsigned int xnum, unsigned long handler);
+extern int      syscreate( funcptr fp, int stack );
+extern int      sysyield( void );
+extern int      sysstop( void );
+
+extern void     root( void );
+
+void printCF (void * stack);
+
+int syscall(int call, ...);
+/* int syscreate(void (*func)(), int stack); */
+int sysyield(void);
+int sysstop(void);
+
