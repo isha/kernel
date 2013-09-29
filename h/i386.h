@@ -110,4 +110,5 @@ struct segtr {
 #define         TIMER_16BIT     0x30    /* r/w counter 16 bits, LSB first */
 #define         TIMER_BCD       0x01    /* count in BCD */
 
-
+extern long    freemem;        /* start of free memory */
+extern char	*maxaddr;       /* end of memory space */
