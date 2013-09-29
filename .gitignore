@@ -1,0 +1,5 @@
+*.o
+boot/zBoot/zSystem
+boot/zBoot/zSystem.out
+boot/zImage
+compile/xeros
