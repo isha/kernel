@@ -56,6 +56,11 @@ void memory_debug() {
 }
 extern void *kmalloc( int size ) {
   kprintf("\nkmalloc: looking for %ld bytes", size);
+  
+  // Set to nearest paragraph
+  int amnt = size/16 + ((size%16) ? 1 : 0);
+  size = amnt*16;
+
   MemoryHeader *mem = memory_start;
   while (size > mem->size) {
     if (mem->next == NULL) { 
