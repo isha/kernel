@@ -29,6 +29,11 @@ extern void kmeminit( void ) {
   after_hole->size = maxaddr - HOLEEND - MEMORY_HEADER_SIZE;
 
   memory_debug();
+  kprintf("\nUsing kmalloc for 1026 bytes");
+  void *test = kmalloc(1026);
+  kprintf("\nUsing kfree for %ld", test);
+  kfree(test);
+  memory_debug();
 }
 
 void memory_debug() {
@@ -83,11 +88,23 @@ extern void *kmalloc( int size ) {
     if (memory_start == mem) memory_start = mem->next;
   }
   mem->sanity_check = size;
+  mem->size = size;
 
   memory_debug();
   return mem->data_start;
 }
 
 extern void kfree( void *ptr ) {
-
+  MemoryHeader *mem = ptr - MEMORY_HEADER_SIZE;
+  
+  if (mem->prev != NULL) {
+    mem->next = ((MemoryHeader *)(mem->prev))->next;
+    ((MemoryHeader *)(mem->prev))->next = mem;
+    if (mem->next != NULL) ((MemoryHeader *)(mem->next))->prev = mem;
+  }
+  else {
+    memory_start->prev = mem;
+    mem->next = memory_start;
+    memory_start = mem;
+  }
 }
