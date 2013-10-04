@@ -35,3 +35,23 @@ unsigned char inb(unsigned int);
 extern void kmeminit( void );
 extern void *kmalloc( int );
 extern void kfree( void *);
+
+typedef enum {
+  READY,
+  BLOCKED,
+  STOPPED,
+  RUNNING
+} ProcessState;
+
+typedef struct {
+  int pid;
+  ProcessState state;
+  int priority;
+  struct PCB * next;
+} PCB;
+
+extern PCB * ReadyQueue;
+extern PCB * Running;
+
+extern void dispatch();
+extern void setup_process_queues(PCB *);

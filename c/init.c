@@ -28,8 +28,13 @@ void initproc( void )       /* The beginning */
   kprintf( "\n\nCPSC 415, 2013W1 \n32 Bit Xeros 1.1\nLocated at: %x to %x\n", &entry, &end ); 
   kprintf("\nFree Memory starts at %ld and ends at %ld ", freemem, maxaddr);
   kprintf("\nHole start at %ld and end at %ld, with size being %ld ", HOLESTART, HOLEEND, HOLESIZE);
-        /* Your code goes here */
+  
   kmeminit();
+  
+  PCB * process;
+  setup_process_queues(process);
+
+  dispatch();
 
         /* This code should never be reached after you are done */
   for(;;) ; /* loop forever */
