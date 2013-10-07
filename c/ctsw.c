@@ -9,3 +9,7 @@
    compiler/assembler options or issue directives to permit usage of Intel's
    assembly language conventions.
 */
+
+extern RequestType contextswitch (PCB * pcb) {
+
+}

@@ -20,3 +20,4 @@ keyboard: serial_delay=250
 #ips: 1000000
 mouse: enabled=0
 private_colormap: enabled=0
+parport1: enabled=1, file="parout.txt"

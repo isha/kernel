@@ -51,7 +51,12 @@ typedef struct {
 } PCB;
 
 extern PCB * ReadyQueue;
-extern PCB * Running;
+
+typedef enum {
+  CREATE,
+  YIELD,
+  STOP
+} RequestType;
 
 extern void dispatch();
 extern void setup_process_queues(PCB *);
