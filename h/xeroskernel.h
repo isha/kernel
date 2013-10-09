@@ -32,6 +32,7 @@ void disable(void);
 void outb(unsigned int, unsigned char);
 unsigned char inb(unsigned int);
 
+/* Memory manager */
 extern void kmeminit( void );
 extern void *kmalloc( int );
 extern void kfree( void *);
@@ -74,4 +75,3 @@ typedef struct {
 } ContextFrame;
 
 extern void dispatch();
-extern void setup_process_queues(PCB *);

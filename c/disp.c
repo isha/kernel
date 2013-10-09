@@ -6,23 +6,25 @@
 PCB * ReadyQueue;
 
 void ready(PCB * pcb) {
-  PCB * p = ReadyQueue;
-  while (p->next != NULL) p = p->next;
-  p->next = pcb;
+  PCB * p;
+  
+  if (ReadyQueue) {
+    p = ReadyQueue;
+    while (p->next != NULL) p = p->next;
+    p->next = pcb;
+  } else {
+    ReadyQueue = p;
+  }
   pcb->next = NULL;
   pcb->state = READY;
 }
 
 PCB * next() {
-  PCB * next_ready = ReadyQueue;
-  ReadyQueue = ReadyQueue->next;
-  return next_ready;
-}
-
-extern void setup_process_queues (PCB * process) {
-  process->next = NULL;
-  process->state = READY;
-  ReadyQueue = process;
+  if (ReadyQueue) {
+    PCB * next_ready = ReadyQueue;
+    ReadyQueue = ReadyQueue->next;
+    return next_ready;
+  } else return NULL;
 }
 
 extern void dispatch() {
@@ -41,4 +43,3 @@ extern void dispatch() {
   }
 }
 
-/* Your code goes here */

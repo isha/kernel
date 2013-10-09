@@ -31,11 +31,6 @@ void initproc( void )       /* The beginning */
   
   kmeminit();
   contextinit();
-   
-  PCB * process;
-  setup_process_queues(process);
-   
-  contextswitch(process);
 
   //dispatch();
 
