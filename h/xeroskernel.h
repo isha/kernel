@@ -48,6 +48,7 @@ typedef struct {
   ProcessState state;
   int priority;
   struct PCB * next;
+  long esp;
 } PCB;
 
 extern PCB * ReadyQueue;
@@ -57,6 +58,20 @@ typedef enum {
   YIELD,
   STOP
 } RequestType;
+
+typedef struct {
+  unsigned int edi;
+  unsigned int esi;
+  unsigned int ebp;
+  unsigned int esp;
+  unsigned int ebx;
+  unsigned int edx;
+  unsigned int ecx;
+  unsigned int eax;
+  unsigned int eip;
+  unsigned int cs;
+  unsigned int eflags;
+} ContextFrame;
 
 extern void dispatch();
 extern void setup_process_queues(PCB *);

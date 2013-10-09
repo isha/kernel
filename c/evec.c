@@ -12,7 +12,7 @@ extern struct segtr idtr;
 extern long	defevec[];
 extern int	userret(void);
 
-static void set_evec(unsigned int xnum, unsigned long handler);
+extern void set_evec(unsigned int xnum, unsigned long handler);
 
 
 void initevec(void)
@@ -35,7 +35,7 @@ void initevec(void)
  * set_evec - set exception vector to point to an exception handler
  *------------------------------------------------------------------------
  */
-static void set_evec(unsigned int xnum, unsigned long handler)
+void set_evec(unsigned int xnum, unsigned long handler)
 //unsigned int	xnum;
 //unsigned long	handler;	/* int value of function pointer */
 {

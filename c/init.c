@@ -30,11 +30,14 @@ void initproc( void )       /* The beginning */
   kprintf("\nHole start at %ld and end at %ld, with size being %ld ", HOLESTART, HOLEEND, HOLESIZE);
   
   kmeminit();
-  
+  contextinit();
+   
   PCB * process;
   setup_process_queues(process);
+   
+  contextswitch(process);
 
-  dispatch();
+  //dispatch();
 
         /* This code should never be reached after you are done */
   for(;;) ; /* loop forever */

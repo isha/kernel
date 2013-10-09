@@ -2,14 +2,39 @@
  */
 
 #include <xeroskernel.h>
+#include <i386.h>
 
-/* Your code goes here - You will need to write some assembly code. You must
-   use the gnu conventions for specifying the instructions. (i.e this is the
-   format used in class and on the slides.) You are not allowed to change the
-   compiler/assembler options or issue directives to permit usage of Intel's
-   assembly language conventions.
-*/
+void _entry_point();
+
+extern void contextinit(void) {
+  set_evec(49, (unsigned long) _entry_point);
+}
+
+static void *k_stack;
+static unsigned int save_esp;
 
 extern RequestType contextswitch (PCB * pcb) {
-
+  kprintf("\nSwitching to PID %d ", pcb->pid);
+  save_esp = pcb->esp;
+  
+  RequestType call; 
+  __asm __volatile(
+      "pushf\n"
+      "pusha\n"
+      "movl %%esp, k_stack\n"
+      "movl save_esp, %%esp\n"
+      "popa\n"
+      "iret\n"
+    "_entry_point:\n"
+      "pusha\n"
+      "movl %%esp, save_esp\n"
+      "movl k_stack, %%esp\n"
+      "popa\n"
+      "popf\n"
+      : 
+      : 
+      : "%eax"
+  );
+  
+  return call;
 }
