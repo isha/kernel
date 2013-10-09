@@ -2,6 +2,7 @@
  */
 
 #include <xeroskernel.h>
+#include <stdarg.h>
 
 /* Pointer to first PCB in the Ready queue linked list */
 PCB * ReadyQueue;
@@ -38,10 +39,24 @@ extern void dispatch() {
 
   for (;;) {
     request = contextswitch(process);
+    
     switch(request) {
-      case CREATE: create(); break;
-      case YIELD: ready(process); process = next(); break;
-      case STOP: cleanup(process); process = next(); break;
+      case CREATE: 
+      {
+        va_list ap = process->esp;
+        void (*func)() = va_arg(ap, long);
+        int stack = va_arg(ap, int); 
+        create(func, stack); 
+        break;
+      }
+      case YIELD: 
+        ready(process); 
+        process = next(); 
+        break;
+      case STOP: 
+        cleanup(process); 
+        process = next(); 
+        break;
     }  
   }
 }

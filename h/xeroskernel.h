@@ -75,3 +75,7 @@ typedef struct {
 } ContextFrame;
 
 extern void dispatch();
+extern int syscall(RequestType call, ... );
+extern int syscreate (void (*func)(), int stack);
+extern void sysyield (void);
+extern void sysstop (void);
