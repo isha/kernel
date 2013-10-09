@@ -96,7 +96,7 @@ extern void kfree( void *ptr ) {
 /* Debug method for testing */
 void memory_debug() {
   kprintf("\n\nMemory Linked list");
-  kprintf("\nSize of MemoryHeader is %ld", MEMORY_HEADER_SIZE); 
+  kprintf("\nSize of MemoryHeader is %ld", sizeof(MemoryHeader)); 
   kprintf("\n-----------------------------");
   
   int i = 0;
