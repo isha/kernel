@@ -6,12 +6,14 @@
 static int NextPID = 1;
 
 extern int create (void (*func)(), int stack) {
+  // Allocate large enough memory for process
   long size = sizeof(PCB)+sizeof(ContextFrame)+stack*2;
   PCB * pcb = kmalloc(size);
 
   if (pcb != NULL) {
     pcb->esp = pcb + size - (sizeof(ContextFrame) + 16);
     
+    // Initial Context
     ContextFrame * cf = pcb->esp;
     cf->cs = getCS();
     cf->eip = (unsigned int) func;
@@ -29,4 +31,3 @@ extern int create (void (*func)(), int stack) {
 
 extern void cleanup (PCB * pcb) {
 }
-/* Your code goes here. */

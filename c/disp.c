@@ -3,8 +3,10 @@
 
 #include <xeroskernel.h>
 
+/* Pointer to first PCB in the Ready queue linked list */
 PCB * ReadyQueue;
 
+/* Adds specified PCB to the ready queue or creates a queue if doesnt exist */
 void ready(PCB * pcb) {
   PCB * p;
   
@@ -19,6 +21,7 @@ void ready(PCB * pcb) {
   pcb->state = READY;
 }
 
+/* Removes and returns a PCB from the ready queue */
 PCB * next() {
   if (ReadyQueue) {
     PCB * next_ready = ReadyQueue;

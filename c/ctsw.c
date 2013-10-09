@@ -10,11 +10,10 @@ extern void contextinit(void) {
   set_evec(49, (unsigned long) _entry_point);
 }
 
-static void *k_stack;
-static unsigned int save_esp;
+static void *k_stack; // Kernel stack 
+static unsigned int save_esp; // Process stack
 
 extern RequestType contextswitch (PCB * pcb) {
-  kprintf("\nSwitching to PID %d ", pcb->pid);
   save_esp = pcb->esp;
   
   RequestType call; 
