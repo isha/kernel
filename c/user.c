@@ -3,4 +3,9 @@
 
 #include <xeroskernel.h>
 
-/* Your code goes here */
+extern void root (void) {
+  kprintf("\nHello World!");
+  while (TRUE) {
+    sysyield();
+  }
+};

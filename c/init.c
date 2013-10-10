@@ -35,7 +35,15 @@ void initproc( void )       /* The beginning */
   /* Initialize context switcher */
   contextinit();
 
-  //dispatch();
+  kprintf("\nCreating root proces..");
+  int i;
+  for (i=0; i<100000; i++);
+
+  /* Create root process */
+  int pid = create(root, 4096);
+  kprintf("\nPID = %d", pid);
+
+  dispatch();
 
         /* This code should never be reached after you are done */
   for(;;) ; /* loop forever */

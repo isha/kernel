@@ -55,9 +55,9 @@ typedef struct {
 extern PCB * ReadyQueue;
 
 typedef enum {
-  CREATE,
-  YIELD,
-  STOP
+  CREATE = 0,
+  YIELD =  1,
+  STOP = 2
 } RequestType;
 
 typedef struct {
@@ -74,8 +74,11 @@ typedef struct {
   unsigned int eflags;
 } ContextFrame;
 
+extern void ready(PCB *);
 extern void dispatch();
 extern int syscall(RequestType call, ... );
 extern int syscreate (void (*func)(), int stack);
 extern void sysyield (void);
 extern void sysstop (void);
+
+extern void root (void);

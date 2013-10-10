@@ -11,16 +11,17 @@ extern int create (void (*func)(), int stack) {
   PCB * pcb = kmalloc(size);
 
   if (pcb != NULL) {
-    pcb->esp = pcb + size - (sizeof(ContextFrame) + 16);
+    pcb->esp = pcb + sizeof(PCB) + stack;
     
     // Initial Context
     ContextFrame * cf = pcb->esp;
     cf->cs = getCS();
     cf->eip = (unsigned int) func;
     cf->eflags = 0x00003000;
+    cf->esp = cf;
+    cf->ebp = cf->esp;
     
     pcb->pid = NextPID++;
-
     ready(pcb);
   
     return pcb->pid;

@@ -6,17 +6,17 @@
 
 extern int syscall(RequestType call, ... ) {
   va_list ap;
-  int ret;
-  
+  int ret = 0;
+   
   va_start(ap, call);
-
   __asm __volatile( 
-    "movl %1, %%eax\n"
-    "movl %2, %%edx\n"
-    "int %3\n"
+    "movl %0, %%eax\n" : : "g" (call) : "%eax");
+  __asm __volatile(
+    "movl %1, %%edx\n"
+    "int $49\n"
     "movl %%eax, %0\n"
     : "=g" (ret)
-    : "g" (call), "g" (ap), "i" (49)
+    : "g" (ap)
     : "%eax"
   );
 
@@ -26,6 +26,7 @@ extern int syscall(RequestType call, ... ) {
 
 extern int syscreate (void (*func)(), int stack) {
   int pid = syscall(CREATE, func, stack);
+  return pid;
 }
 
 extern void sysyield (void) {

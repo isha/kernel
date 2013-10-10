@@ -10,14 +10,15 @@ PCB * ReadyQueue;
 /* Adds specified PCB to the ready queue or creates a queue if doesnt exist */
 void ready(PCB * pcb) {
   PCB * p;
-  
+
   if (ReadyQueue) {
     p = ReadyQueue;
     while (p->next != NULL) p = p->next;
     p->next = pcb;
   } else {
-    ReadyQueue = p;
+    ReadyQueue = pcb;
   }
+
   pcb->next = NULL;
   pcb->state = READY;
 }
@@ -36,10 +37,8 @@ extern void dispatch() {
   process = next();
   
   RequestType request;
-
   for (;;) {
     request = contextswitch(process);
-    
     switch(request) {
       case CREATE: 
       {
@@ -50,7 +49,7 @@ extern void dispatch() {
         break;
       }
       case YIELD: 
-        ready(process); 
+        ready(process);
         process = next(); 
         break;
       case STOP: 
