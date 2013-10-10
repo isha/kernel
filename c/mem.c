@@ -80,23 +80,38 @@ extern void *kmalloc( int size ) {
 /* Frees memory block at specified address and adds it back to the free memory list */
 extern void kfree( void *ptr ) {
   MemoryHeader *mem = ptr - sizeof(MemoryHeader);
+  if (memory_start == NULL) return;
   
-  if (mem->prev != NULL) {
-    mem->next = ((MemoryHeader *)(mem->prev))->next;
-    ((MemoryHeader *)(mem->prev))->next = mem;
-    if (mem->next != NULL) ((MemoryHeader *)(mem->next))->prev = mem;
+  mem->next = memory_start;
+  memory_start->prev = mem;
+  memory_start = mem;
+
+  // Joining adjacent free memory blocks
+  MemoryHeader * iter = memory_start->next;
+  while (iter != NULL) {
+    // Check if space right after mem is also free
+    if (mem->data_start+mem->size == iter) {    
+      mem->next = iter->next;
+      if (iter->next != NULL) ((MemoryHeader *) iter->next)->prev = mem;
+      mem->size += sizeof(MemoryHeader) + iter->size;
+    }
+    iter = iter->next;
   }
-  else {
-    memory_start->prev = mem;
-    mem->next = memory_start;
-    memory_start = mem;
+  iter = memory_start->next;
+  while (iter != NULL) {
+    // Check if there is a free block right before mem
+    if (iter->data_start+iter->size+1 == mem) {  
+       iter->next = mem->next;
+       if (mem->next != NULL) ((MemoryHeader *) mem->next)->prev = iter;
+       iter->size = iter->size + sizeof(MemoryHeader) + mem->size;
+    }
+    iter = iter->next;
   }
 }
 
 /* Debug method for testing */
 void memory_debug() {
-  kprintf("\n\nMemory Linked list");
-  kprintf("\nSize of MemoryHeader is %ld", sizeof(MemoryHeader)); 
+  kprintf("\nMemory Linked list");
   kprintf("\n-----------------------------");
   
   int i = 0;
