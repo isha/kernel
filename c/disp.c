@@ -32,6 +32,9 @@ PCB * next() {
   } else return NULL;
 }
 
+/* Dispatches to next action based on process request. 
+ * Also fetches process arguments for a system call
+ */
 extern void dispatch() {
   PCB * process;
   process = next();
@@ -42,10 +45,10 @@ extern void dispatch() {
     switch(request) {
       case CREATE: 
       {
-        va_list ap = process->esp;
+        va_list ap = process->args;
         void (*func)() = va_arg(ap, long);
         int stack = va_arg(ap, int); 
-        create(func, stack); 
+        process->ret = create(func, stack); 
         break;
       }
       case YIELD: 

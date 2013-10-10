@@ -26,8 +26,6 @@ extern char *maxaddr; /* max memory address (set in i386.c) */
 void initproc( void )       /* The beginning */
 {
   kprintf( "\n\nCPSC 415, 2013W1 \n32 Bit Xeros 1.1\nLocated at: %x to %x\n", &entry, &end ); 
-  kprintf("\nFree Memory starts at %ld and ends at %ld ", freemem, maxaddr);
-  kprintf("\nHole start at %ld and end at %ld, with size being %ld ", HOLESTART, HOLEEND, HOLESIZE);
  
   /* Initialize memory manager */ 
   kmeminit();
@@ -35,13 +33,9 @@ void initproc( void )       /* The beginning */
   /* Initialize context switcher */
   contextinit();
 
-  kprintf("\nCreating root proces..");
-  int i;
-  for (i=0; i<100000; i++);
-
   /* Create root process */
   int pid = create(root, 4096);
-  kprintf("\nPID = %d", pid);
+  kprintf("\n\nRoot PID = %d", pid);
 
   dispatch();
 

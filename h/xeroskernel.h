@@ -50,6 +50,8 @@ typedef struct {
   int priority;
   struct PCB * next;
   long esp;
+  long args;
+  int ret;
 } PCB;
 
 extern PCB * ReadyQueue;
