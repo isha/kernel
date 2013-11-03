@@ -12,7 +12,7 @@ extern struct segtr idtr;
 extern long	defevec[];
 extern int	userret(void);
 
-void set_evec(unsigned int xnum, unsigned long handler);
+extern void set_evec(unsigned int xnum, unsigned long handler);
 
 
 void initevec(void)

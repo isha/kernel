@@ -2,87 +2,67 @@
  */
 
 #include <xeroskernel.h>
-#include <xeroslib.h>
 #include <stdarg.h>
 
+/* Pointer to first PCB in the Ready queue linked list */
+PCB * ReadyQueue;
 
-static pcb      *head = NULL;
-static pcb      *tail = NULL;
+/* Adds specified PCB to the ready queue or creates a queue if doesnt exist */
+void ready(PCB * pcb) {
+  PCB * p;
 
-void     dispatch( void ) {
-/********************************/
+  if (ReadyQueue) {
+    p = ReadyQueue;
+    while (p->next != NULL) p = p->next;
+    p->next = pcb;
+  } else {
+    ReadyQueue = pcb;
+  }
 
-    pcb         *p;
-    int         r;
-    funcptr     fp;
-    int         stack;
-    va_list     ap;
+  pcb->next = NULL;
+  pcb->state = READY;
+}
 
-    for( p = next(); p; ) {
-      //      kprintf("Process %x selected stck %x\n", p, p->esp);
+/* Removes and returns a PCB from the ready queue */
+PCB * next() {
+  if (ReadyQueue) {
+    PCB * next_ready = ReadyQueue;
+    ReadyQueue = ReadyQueue->next;
+    return next_ready;
+  } else return NULL;
+}
 
-      r = contextswitch( p );
-      switch( r ) {
-      case( SYS_CREATE ):
-        ap = (va_list)p->args;
-        fp = (funcptr)(va_arg( ap, int ) );
-        stack = va_arg( ap, int );
-        p->ret = create( fp, stack );
+/* Dispatches to next action based on process request. 
+ * Also fetches process arguments for a system call
+ */
+extern void dispatch() {
+  PCB * process;
+  process = next();
+  
+  RequestType request;
+  for (;;) {
+    request = contextswitch(process);
+    switch(request) {
+      case CREATE: 
+      {
+        va_list ap = process->args;
+        void (*func)() = va_arg(ap, long);
+        int stack = va_arg(ap, int); 
+        process->ret = create(func, stack); 
         break;
-      case( SYS_YIELD ):
-        ready( p );
-        p = next();
-        break;
-      case( SYS_STOP ):
-        p->state = STATE_STOPPED;
-        p = next();
-        break;
-      default:
-        kprintf( "Bad Sys request %d, pid = %d\n", r, p->pid );
       }
-    }
-
-    kprintf( "Out of processes: dying\n" );
-    
-    for( ;; );
-}
-
-extern void dispatchinit( void ) {
-/********************************/
-
-  //bzero( proctab, sizeof( pcb ) * MAX_PROC );
-  memset(proctab, 0, sizeof( pcb ) * MAX_PROC);
-}
-
-extern void     ready( pcb *p ) {
-/*******************************/
-
-    p->next = NULL;
-    p->state = STATE_READY;
-
-    if( tail ) {
-        tail->next = p;
-    } else {
-        head = p;
-    }
-
-    tail = p;
-}
-
-extern pcb      *next( void ) {
-/*****************************/
-
-    pcb *p;
-
-    p = head;
-
-    if( p ) {
-        head = p->next;
-        if( !head ) {
-            tail = NULL;
-        }
-    }
-
-    return( p );
+      case YIELD: 
+        ready(process);
+        process = next(); 
+        break;
+      case STOP: 
+        cleanup(process); 
+        process = next(); 
+        break;
+      case GET_PID:
+        process->ret = process->pid;
+        break;
+    }  
+  }
 }
 

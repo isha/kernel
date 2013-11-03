@@ -3,45 +3,33 @@
 
 #include <xeroskernel.h>
 
-/* Your code goes here */
- void producer( void ) {
-/****************************/
-
-    int         i;
-
-    for( i = 0; i < 5; i++ ) {
-        kprintf( "Produce %d\n", i );
-        sysyield();
-    }
-
-    sysstop();
-}
-
- void consumer( void ) {
-/****************************/
-
-    int         i;
-
-    for( i = 0; i < 5; i++ ) {
-        kprintf( "Consume %d \n", i );
-        sysyield();
-    }
-
-    sysstop();
-}
-
- void     root( void ) {
-/****************************/
-
-
-    kprintf("Root has been called\n");
-
+extern void producer (void) {
+  int i;
+  for (i=0; i<12; i++) {
+    kprintf(" Happy ");
     sysyield();
-    sysyield();
-    syscreate( &producer, 4096 );
-    syscreate( &consumer, 4096 );
-
-    for( ;; ) {
-        sysyield();
-    }
+  }
+  sysstop();
 }
+
+extern void consumer (void) {
+  int i;
+  for (i=0; i<15; i++) {
+    kprintf("\n New Year ");
+    sysyield();
+  }
+  sysstop();
+}
+
+extern void root (void) {
+  kprintf("\nTo: World\n\tHello!\nFrom: Root");
+  
+  int p = syscreate(producer, 4096);
+  int c = syscreate(consumer, 4096);
+  
+  kprintf("\n\nProducer PID %d, Consumer PID %d", p, c);
+
+  while (TRUE) {
+    sysyield();
+  }
+};

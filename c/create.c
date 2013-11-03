@@ -2,60 +2,35 @@
  */
 
 #include <xeroskernel.h>
-#include <xeroslib.h>
 
-pcb     proctab[MAX_PROC];
+static int NextPID = 1;
 
-/* make sure interrupts are armed later on in the kernel development  */
-#define STARTING_EFLAGS         0x00003000
+/* Creates a process and initializes stack for it */
+extern int create (void (*func)(), int stack) {
+  // Allocate large enough memory for process
+  long size = sizeof(PCB)+sizeof(ContextFrame)+stack+16; // Extra 16 just in case
+  PCB * pcb = kmalloc(size);
 
-static int      nextpid = 1;
-
-
-
-int      create( funcptr fp, int stack ) {
-/***********************************************/
-
-    context_frame       *cf;
-    pcb                 *p = NULL;
-    int                 i;
-
-    if( stack < PROC_STACK ) {
-        stack = PROC_STACK;
-    }
-
-    for( i = 0; i < MAX_PROC; i++ ) {
-        if( proctab[i].state == STATE_STOPPED ) {
-            p = &proctab[i];
-            break;
-        }
-    }
-
-    if( !p ) {
-        return( -1 );
-    }
-
-
-    cf = kmalloc( stack*2);
-    if( !cf ) {
-        return( -1 );
-    }
-
-    cf = (context_frame *)((int)cf + stack - 4);
-    cf--;
-
-    memset(cf, 0x81, sizeof( context_frame ));
-
-    cf->iret_cs = getCS();
-    cf->iret_eip = (unsigned int)fp;
-    cf->eflags = STARTING_EFLAGS;
-
-    cf->esp = (int)(cf + 1);
+  if (pcb != NULL) {
+    pcb->esp = pcb + sizeof(PCB) + stack;
+    
+    // Initial Context
+    ContextFrame * cf = pcb->esp;
+    cf->cs = getCS();
+    cf->eip = (unsigned int) func;
+    cf->eflags = 0x00003000; // Value from lectures
+    cf->esp = cf;
     cf->ebp = cf->esp;
-    p->esp = (int)cf;
-    p->state = STATE_READY;
-    p->pid = nextpid++;
+    
+    pcb->pid = NextPID++;
+    ready(pcb);
+  
+    return pcb->pid;
+  } else {
+    return -1;
+  }
+}
 
-    ready( p );
-    return( p->pid );
+extern void cleanup (PCB * pcb) {
+  kfree(pcb);
 }

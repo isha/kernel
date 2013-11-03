@@ -2,23 +2,23 @@
 
 /* Symbolic constants used throughout Xinu */
 
-typedef	char		Bool;		/* Boolean type			*/
-#define	FALSE		0		/* Boolean constants		*/
-#define	TRUE		1
-#define	EMPTY		(-1)		/* an illegal gpq		*/
-#define	NULL		0		/* Null pointer for linked lists*/
-#define	NULLCH		'\0'		/* The null character		*/
+typedef char    Bool;   /* Boolean type     */
+#define FALSE   0   /* Boolean constants    */
+#define TRUE    1
+#define EMPTY   (-1)    /* an illegal gpq   */
+#define NULL    0   /* Null pointer for linked lists*/
+#define NULLCH    '\0'    /* The null character   */
 
 
 /* Universal return constants */
 
-#define	OK		 1		/* system call ok		*/
-#define	SYSERR		-1		/* system call failed		*/
-#define	EOF		-2		/* End-of-file (usu. from read)	*/
-#define	TIMEOUT		-3		/* time out  (usu. recvtim)	*/
-#define	INTRMSG		-4		/* keyboard "intr" key pressed	*/
-					/*  (usu. defined as ^B)	*/
-#define	BLOCKERR	-5		/* non-blocking op would block	*/
+#define OK     1    /* system call ok   */
+#define SYSERR    -1    /* system call failed   */
+#define EOF   -2    /* End-of-file (usu. from read) */
+#define TIMEOUT   -3    /* time out  (usu. recvtim) */
+#define INTRMSG   -4    /* keyboard "intr" key pressed  */
+          /*  (usu. defined as ^B)  */
+#define BLOCKERR  -5    /* non-blocking op would block  */
 
 /* Functions defined by startup code */
 
@@ -32,75 +32,57 @@ void disable(void);
 void outb(unsigned int, unsigned char);
 unsigned char inb(unsigned int);
 
-extern void kmeminit(void);
-extern void *kmalloc(int size);
-extern void kfree(void *ptr);
+/* Memory manager */
+extern void kmeminit( void );
+extern void *kmalloc( int );
+extern void kfree( void *);
 
-#define MAX_PROC        64
-#define KERNEL_INT      80
-#define PROC_STACK      (4096 * 4)
+typedef enum {
+  READY,
+  BLOCKED,
+  STOPPED,
+  RUNNING
+} ProcessState;
 
-#define STATE_STOPPED   0
-#define STATE_READY     1
+typedef struct {
+  int pid;
+  ProcessState state;
+  int priority;
+  struct PCB * next;
+  long esp;
+  long args;
+  int ret;
+} PCB;
 
-#define SYS_STOP        0
-#define SYS_YIELD       1
-#define SYS_CREATE      2
-#define SYS_TIMER       3
+extern PCB * ReadyQueue;
 
-typedef void    (*funcptr)(void);
+typedef enum {
+  CREATE = 0,
+  YIELD =  1,
+  STOP = 2,
+  GET_PID = 3,
+  PUTS = 4
+} RequestType;
 
-typedef struct struct_pcb pcb;
-struct struct_pcb {
-    long        esp;
-    pcb         *next;
-    int         state;
-    unsigned int pid;
-    int         ret;
-    long        args;
-};
+typedef struct {
+  unsigned int edi;
+  unsigned int esi;
+  unsigned int ebp;
+  unsigned int esp;
+  unsigned int ebx;
+  unsigned int edx;
+  unsigned int ecx;
+  unsigned int eax;
+  unsigned int eip;
+  unsigned int cs;
+  unsigned int eflags;
+} ContextFrame;
 
-extern pcb     proctab[MAX_PROC];
-#pragma pack(1)
+extern void ready(PCB *);
+extern void dispatch();
+extern int syscall(RequestType call, ... );
+extern int syscreate (void (*func)(), int stack);
+extern void sysyield (void);
+extern void sysstop (void);
 
-typedef struct context_frame {
-  unsigned int        edi;
-  unsigned int        esi;
-  unsigned int        ebp;
-  unsigned int        esp;
-  unsigned int        ebx;
-  unsigned int        edx;
-  unsigned int        ecx;
-  unsigned int        eax;
-  unsigned int        iret_eip;
-  unsigned int        iret_cs;
-  unsigned int        eflags;
-  unsigned int        stackSlots[0];
-} context_frame;
-
-extern pcb      proctab[MAX_PROC];
-
-extern unsigned short getCS(void);
-extern void     kmeminit( void );
-extern void     *kmalloc( int size );
-extern void     dispatch( void );
-extern void     dispatchinit( void );
-extern void     ready( pcb *p );
-extern pcb      *next( void );
-extern void     contextinit( void );
-extern int      contextswitch( pcb *p );
-extern int      create( funcptr fp, int stack );
-extern void     set_evec(unsigned int xnum, unsigned long handler);
-extern int      syscreate( funcptr fp, int stack );
-extern int      sysyield( void );
-extern int      sysstop( void );
-
-extern void     root( void );
-
-void printCF (void * stack);
-
-int syscall(int call, ...);
-/* int syscreate(void (*func)(), int stack); */
-int sysyield(void);
-int sysstop(void);
-
+extern void root (void);

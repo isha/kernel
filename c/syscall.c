@@ -4,45 +4,46 @@
 #include <xeroskernel.h>
 #include <stdarg.h>
 
+static int ret;
 
-int syscall( int req, ... ) {
-/**********************************/
-
-    va_list     ap;
-    int         rc;
-
-    va_start( ap, req );
-
-    __asm __volatile( " \
-        movl %1, %%eax \n\
-        movl %2, %%edx \n\
-        int  %3 \n\
-        movl %%eax, %0 \n\
-        "
-        : "=g" (rc)
-        : "g" (req), "g" (ap), "i" (KERNEL_INT)
-        : "%eax" 
-    );
- 
-    va_end( ap );
-
-    return( rc );
+extern int syscall(RequestType call, ... ) {
+  va_list ap;
+  va_start(ap, call);
+  __asm __volatile( 
+    "movl %0, %%eax\n" : : "g" (call) : "%eax"); // Copy request type to eax
+  __asm __volatile(
+    "movl %1, %%edx\n"  // Copy address of arg list to edx
+    "int $49\n" // Kernel int number, set in ctsw.c:contextinit()
+    "movl %%eax, %0\n"  // Return value from interrupt to variable
+    : "=g" (ret)
+    : "g" (ap)
+    : "%eax"
+  );
+  va_end(ap);
+  return ret;
 }
 
- int syscreate( funcptr fp, int stack ) {
-/*********************************************/
-
-    return( syscall( SYS_CREATE, fp, stack ) );
+/* Creates a process and returns PID. Return -1 if unsuccesful */
+extern int syscreate (void (*func)(), int stack) {
+  int pid = syscall(CREATE, func, stack);
+  return pid;
 }
 
- int sysyield( void ) {
-/***************************/
-
-    return( syscall( SYS_YIELD ) );
+/* System yield */
+extern void sysyield (void) {
+  syscall(YIELD);
 }
 
- int sysstop( void ) {
-/**************************/
+/* Stops a process and deallocates the memory assigned to it */
+extern void sysstop (void) {
+  syscall(STOP);
+}
 
-    return( syscall( SYS_STOP ) );
+/* Returns the PID of the currently running process */
+extern unsigned int sysgetpid(void) {
+  return syscall(GET_PID);
+}
+
+extern void sysputs (char *str) {
+  return syscall(PUTS);
 }
