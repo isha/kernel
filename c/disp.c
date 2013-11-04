@@ -62,6 +62,13 @@ extern void dispatch() {
       case GET_PID:
         process->ret = process->pid;
         break;
+      case PUTS:
+      {
+        va_list ap = process->args;
+        char *str = va_arg(ap, char *);
+        kprintf("%s", str);
+        break;
+      }
     }  
   }
 }

@@ -45,5 +45,5 @@ extern unsigned int sysgetpid(void) {
 }
 
 extern void sysputs (char *str) {
-  return syscall(PUTS);
+  return syscall(PUTS, str);
 }

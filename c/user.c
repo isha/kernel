@@ -9,6 +9,9 @@ extern void producer (void) {
     kprintf(" Happy ");
     sysyield();
   }
+  char * str;
+  sprintf(str, "\nPID for consumer is %d", sysgetpid());
+  sysputs(str);
   sysstop();
 }
 
@@ -18,6 +21,9 @@ extern void consumer (void) {
     kprintf("\n New Year ");
     sysyield();
   }
+  char * str;
+  sprintf(str, "\nPID for consumer is %d", sysgetpid());
+  sysputs(str);
   sysstop();
 }
 
