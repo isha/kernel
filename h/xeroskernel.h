@@ -61,7 +61,9 @@ typedef enum {
   YIELD =  1,
   STOP = 2,
   GET_PID = 3,
-  PUTS = 4
+  PUTS = 4,
+  SEND = 5,
+  RECV = 6
 } RequestType;
 
 typedef struct {

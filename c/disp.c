@@ -69,6 +69,24 @@ extern void dispatch() {
         kprintf("%s", str);
         break;
       }
+      case SEND:
+      { 
+        va_list ap = process->args;
+        int dest_pid = va_arg(ap, unsigned int);
+        void * buff = va_arg(ap, void *);
+        int buff_len = va_arg(ap, int);
+        process->ret = send(process, dest_pid, buff, buff_len);
+        break;
+      }
+      case RECV:
+      { 
+        va_list ap = process->args;
+        unsigned int * from_pid = va_arg(ap, unsigned int *);
+        void * buff = va_arg(ap, void *);
+        int buff_len = va_arg(ap, int);
+        process->ret = recv(process, from_pid, buff, buff_len);
+        break;
+      }
     }  
   }
 }

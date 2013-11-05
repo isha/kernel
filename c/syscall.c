@@ -44,6 +44,17 @@ extern unsigned int sysgetpid(void) {
   return syscall(GET_PID);
 }
 
+/* Prints character string passed as parameter onto the screen */
 extern void sysputs (char *str) {
   return syscall(PUTS, str);
+}
+
+/* IPC send message to another process */
+extern int syssend (unsigned int dest_pid, void *buffer, int buffer_len ) {
+  return syscall(SEND, dest_pid, buffer, buffer_len);
+}
+
+/* IPC recieve message from another process */
+extern int sysrecv (unsigned int *from_pid, void *buffer, int buffer_len ) {
+  return syscall(RECV, from_pid, buffer, buffer_len);
 }
