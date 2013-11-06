@@ -32,7 +32,9 @@ void initproc( void )       /* The beginning */
 
   /* Initialize context switcher */
   contextinit();
-
+  
+  initPIT( 100 );
+  
   /* Create root process */
   int pid = create(root, 4096);
   kprintf("\n\nRoot PID = %d", pid);

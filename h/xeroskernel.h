@@ -71,7 +71,8 @@ typedef enum {
   GET_PID = 3,
   PUTS = 4,
   SEND = 5,
-  RECV = 6
+  RECV = 6,
+  TIMER_INT = 7
 } RequestType;
 
 typedef struct {

@@ -18,7 +18,7 @@ extern int create (void (*func)(), int stack) {
     ContextFrame * cf = pcb->esp;
     cf->cs = getCS();
     cf->eip = (unsigned int) func;
-    cf->eflags = 0x00003000; // Value from lectures
+    cf->eflags = 0x00003200; // Value from lectures
     cf->esp = cf;
     cf->ebp = cf->esp;
     

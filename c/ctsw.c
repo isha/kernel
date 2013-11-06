@@ -5,11 +5,14 @@
 #include <i386.h>
 
 /* Place holder for entry point into kernel from interrupt */
-void _entry_point(void);
+void _common_entry_point(void);
+void _timer_entry_point(void);
+void _kernel_entry_point(void);
 
 /* Initialize interrupt handler */
 extern void contextinit(void) {
-  set_evec(49, (int) _entry_point);
+  set_evec(49, (int) _kernel_entry_point);
+  set_evec(32, (int) _timer_entry_point);
 }
 
 static void *k_stack; // Kernel stack 
@@ -34,13 +37,22 @@ extern RequestType contextswitch (PCB * pcb) {
   );
   
   __asm __volatile(
-      "iret\n"   
-    "_entry_point:\n"
+      "iret\n"
+    "_timer_entry_point:\n"
+      "cli\n"
+      "pusha\n"
+      "movl %1, %0\n"
+      "jmp _common_entry_point\n" : "=g" (call) : "g" (TIMER_INT) : "%eax");
+  
+  __asm __volatile(       
+    "_kernel_entry_point:\n"
+      "cli\n"
       "movl %%eax, %0\n" : "=g" (call) :: "%eax");
   
   __asm __volatile(
       "movl %%edx, %0\n"
       "pusha\n"
+    "_common_entry_point:\n"
       "movl %%esp, save_esp\n"
       "movl k_stack, %%esp\n"
       "popa\n"

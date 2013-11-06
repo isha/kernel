@@ -55,6 +55,11 @@ extern void dispatch() {
         ready(process);
         process = next(); 
         break;
+      case TIMER_INT:
+        ready(process);
+        process = next();
+        end_of_intr();
+        break;
       case STOP: 
         cleanup(process); 
         process = next(); 
