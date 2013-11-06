@@ -17,13 +17,16 @@ extern void producer (void) {
 
 extern void consumer (void) {
   int i;
+  char * str;
+  sprintf(str, "\nPID for consumer is %d , before sleeping", sysgetpid());
+  sysputs(str);
+  syssleep(2000);
+  sprintf(str, "\nAfter sleeping");
+  sysputs(str);
   for (i=0; i<15; i++) {
     kprintf("\n New Year ");
     sysyield();
   }
-  char * str;
-  sprintf(str, "\nPID for consumer is %d", sysgetpid());
-  sysputs(str);
   sysstop();
 }
 

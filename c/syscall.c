@@ -58,3 +58,8 @@ extern int syssend (unsigned int dest_pid, void *buffer, int buffer_len ) {
 extern int sysrecv (unsigned int *from_pid, void *buffer, int buffer_len ) {
   return syscall(RECV, from_pid, buffer, buffer_len);
 }
+
+/* Sleep for specified milliseconds */
+extern int syssleep (unsigned int ms) {
+  return syscall(SLEEP, ms);
+}

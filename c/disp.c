@@ -58,6 +58,7 @@ extern void dispatch() {
       case TIMER_INT:
         ready(process);
         process = next();
+        tick();
         end_of_intr();
         break;
       case STOP: 
@@ -90,6 +91,14 @@ extern void dispatch() {
         void * buff = va_arg(ap, void *);
         int buff_len = va_arg(ap, int);
         process->ret = recv(process, from_pid, buff, buff_len);
+        break;
+      }
+      case SLEEP:
+      {
+        va_list ap = process->args;
+        unsigned int ms = va_arg(ap, unsigned int);
+        sleep(process, ms);
+        process = next();
         break;
       }
     }  

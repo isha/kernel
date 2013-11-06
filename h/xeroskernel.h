@@ -41,7 +41,8 @@ typedef enum {
   READY,
   BLOCKED,
   STOPPED,
-  RUNNING
+  RUNNING,
+  SLEEPING
 } ProcessState;
 
 typedef struct {
@@ -60,6 +61,7 @@ typedef struct {
   int ret;
   struct PCB * message_queue;
   MessageBuffer message_buffer;
+  int sleep_counter;
 } PCB;
 
 extern PCB * ReadyQueue;
@@ -72,7 +74,8 @@ typedef enum {
   PUTS = 4,
   SEND = 5,
   RECV = 6,
-  TIMER_INT = 7
+  TIMER_INT = 7,
+  SLEEP = 8
 } RequestType;
 
 typedef struct {
