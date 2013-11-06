@@ -38,6 +38,7 @@ void initproc( void )       /* The beginning */
   /* Create root process */
   int pid = create(root, 4096);
   kprintf("\n\nRoot PID = %d", pid);
+  create(idleproc, 256);
 
   dispatch();
 

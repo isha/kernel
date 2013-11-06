@@ -100,6 +100,7 @@ extern void sysyield (void);
 extern void sysstop (void);
 
 extern void root (void);
+extern void idleproc (void);
 
 #define CIRCULAR_IPC_ERROR -2
 #define PROCESS_NOT_FOUND -1

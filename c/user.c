@@ -10,7 +10,7 @@ extern void producer (void) {
     sysyield();
   }
   char * str;
-  sprintf(str, "\nPID for consumer is %d", sysgetpid());
+  sprintf(str, "\nPID for producer is %d", sysgetpid());
   sysputs(str);
   sysstop();
 }
@@ -28,6 +28,11 @@ extern void consumer (void) {
     sysyield();
   }
   sysstop();
+}
+
+extern void idleproc (void) {
+  while (TRUE) 
+    __asm__ __volatile__( "hlt\n" );
 }
 
 extern void root (void) {
