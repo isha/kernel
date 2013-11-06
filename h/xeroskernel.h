@@ -45,6 +45,12 @@ typedef enum {
 } ProcessState;
 
 typedef struct {
+  unsigned int pid;
+  void * address;
+  unsigned int size;
+} MessageBuffer;
+
+typedef struct {
   int pid;
   ProcessState state;
   int priority;
@@ -52,6 +58,8 @@ typedef struct {
   long esp;
   long args;
   int ret;
+  struct PCB * message_queue;
+  MessageBuffer message_buffer;
 } PCB;
 
 extern PCB * ReadyQueue;
@@ -88,3 +96,16 @@ extern void sysyield (void);
 extern void sysstop (void);
 
 extern void root (void);
+
+#define CIRCULAR_IPC_ERROR -2
+#define PROCESS_NOT_FOUND -1
+#define OTHER_IPC_ERROR -3
+
+
+
+#define PROCESS_NOT_FOUND -1
+#define CIRCULAR_IPC_ERROR -2
+#define OTHER -3
+#define PROCESS_NOT_FOUND -1
+#define CIRCULAR_IPC_ERROR -2
+#define OTHER -3
