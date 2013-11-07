@@ -40,7 +40,7 @@ LDSTR	= -e start -Ttext ${TEXTSPOT}
 #Do NOT modify these lines
 SOBJ = startup.o intr.o 
 IOBJ = init.o i386.o evec.o kprintf.o
-UOBJ = mem.o disp.o ctsw.o syscall.o create.o user.o msg.o sleep.o
+UOBJ = mem.o disp.o ctsw.o syscall.o create.o user.o msg.o sleep.o signal.o
 
 #Add your sources here
 MY_OBJ = 
