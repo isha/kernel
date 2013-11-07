@@ -1,0 +1,23 @@
+# You may need to add and change the following paths to insure
+# that the righ BIOS images are being loaded. 
+#romimage: file=/usr/share/bochs/BIOS-bochs-latest, address=0xf0000
+#vgaromimage: file=/usr/share/bochs/VGABIOS-elpin-2.40
+
+megs: 4
+floppya: 1_44=boot/zImage, status=inserted
+boot: a
+log: bochsout.txt
+#one of the two clock lines needs to be enabled if the clock time is to match wall clock time. 
+#clock: sync=realtime
+clock: sync=slowdown
+panic: action=fatal
+error: action=report
+info: action=report
+debug: action=ignore
+vga_update_interval: 300000
+keyboard_serial_delay: 250
+#floppy_command_delay: 500
+#ips: 1000000
+mouse: enabled=0
+private_colormap: enabled=0
+i440fxsupport: enabled=0
