@@ -83,4 +83,38 @@ unsigned int sysread(int fd, void *buff, int bufflen) {
 
 unsigned int sysioctl(int fd, unsigned long command, ...) {
 	return syscall(SYS_DEV_IOCTL, command);
+
+/* Sets the provided newhandler method as handler for indicated signal 
+ *  Return 0 on success
+ *         -1 if signal is invalid 
+ *         -2 if handler at invalid address
+ *  Third argument is set to address of old handler
+ */
+int syssighandler(int signal, void (*newhandler)(void *), void (** oldHandler)(void *)) {
+    return syscall(SYS_SIGHANDLER, signal, newhandler, oldHandler);
+}
+
+
+/* Used by trampoline code to replace stored stack pointer for the process
+ * with old_sp.
+ */
+void sigreturn(void *old_sp) {
+  return syscall(SYS_SIGRETURN, old_sp);
+}
+
+/* System call to request signal indicated by signalNumber to be delivered
+ * to process with pid as firts parameter
+ * Returns 0 on success
+ *          -33 if target process doesn't exist
+ *          -12 if signalNumber is invalid
+ */
+int syskill(int PID, int signalNumber) {
+  return syscall(SYS_KILL, PID, signalNumber);
+}
+
+
+/* Suspends process until a signal is received 
+ */
+int syssigwait(void) {
+  return syscall(SYS_SIGWAIT);
 }

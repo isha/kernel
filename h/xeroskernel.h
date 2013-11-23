@@ -56,6 +56,10 @@ unsigned char inb(unsigned int);
 #define SYS_DEV_WRITE	13
 #define SYS_DEV_READ	14
 #define SYS_DEV_IOCTL	15
+#define SYS_SIGHANDLER  16
+#define SYS_SIGRETURN   17
+#define SYS_KILL        18
+#define SYS_SIGWAIT     19
 
 #define DEV_NUM 	2
 #define KEYBOARD 	0

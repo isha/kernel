@@ -66,10 +66,8 @@ void     root( void ) {
 
     sysyield();
     sysyield();
-    
-    syscreate(&testKeyboard, 4096);   
-    syscreate( &producer, 4096 );
-    syscreate( &consumer, 4096 );
+//    syscreate( &producer, 4096 );
+//    syscreate( &consumer, 4096 );
     sprintf(buff, "Root finished\n");
     sysputs( buff );
     sysstop();
