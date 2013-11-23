@@ -65,3 +65,22 @@ unsigned int syssleep( unsigned int t ) {
     return syscall( SYS_SLEEP, t );
 }
 
+unsigned int sysopen (int device_no ) {
+	return syscall( SYS_DEV_OPEN, device_no);
+}
+
+unsigned int sysclose (int fd) {
+	return syscall(SYS_DEV_CLOSE, fd);
+}
+
+unsigned int syswrite(int fd, void *buff, int bufflen) {
+	return syscall(SYS_DEV_WRITE, buff, bufflen);
+}
+
+unsigned int sysread(int fd, void *buff, int bufflen) {
+	return syscall(SYS_DEV_READ, buff, bufflen);
+}
+
+unsigned int sysioctl(int fd, unsigned long command, ...) {
+	return syscall(SYS_DEV_IOCTL, command);
+}

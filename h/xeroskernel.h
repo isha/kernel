@@ -49,6 +49,11 @@ unsigned char inb(unsigned int);
 #define SYS_GETPID      8
 #define SYS_PUTS        9
 #define SYS_SLEEP       10
+#define SYS_DEV_OPEN 	11
+#define SYS_DEV_CLOSE   12
+#define SYS_DEV_WRITE	13
+#define SYS_DEV_READ	14
+#define SYS_DEV_IOCTL	15
 
 
 typedef void    (*funcptr)(void);
@@ -119,4 +124,8 @@ int sysstop(void);
 int sysgetpid( void );
 void sysputs( char *str );
 unsigned int syssleep( unsigned int t );
-
+unsigned int sysopen(int device_no);
+unsigned  int sysclose(int fd);
+unsigned int syswrite(int fd, void *buff, int bufflen);
+unsigned int sysread(int fd, void *buff, int bufflen);
+unsigned int sysioctl(int fd, unsigned long command, ...);
