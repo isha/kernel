@@ -5,7 +5,10 @@
  * application. When handler returns, call syssigreturn
  */
 void sigtramp(void (*handler)(void *), void *cntx, void *osp) {
+  handler(cntx);
+  sigreturn(osp);
 
+  kprintf("\nsigtramp.c: Control should never get here!");
 }
 
 
