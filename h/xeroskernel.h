@@ -132,6 +132,7 @@ void     dispatch( void );
 void     dispatchinit( void );
 void     ready( pcb *p );
 pcb      *next( void );
+pcb *findPCB( int pid );
 void     contextinit( void );
 int      contextswitch( pcb *p );
 int      create( funcptr fp, int stack );

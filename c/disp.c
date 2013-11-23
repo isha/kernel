@@ -122,11 +122,12 @@ void     dispatch( void ) {
         sig = va_arg(ap, int);
 
         if (sig > 31 || sig < 0) { p->ret = -12; break; }
-        // pid doesnt exit, return -33
-        
+        pcb * sig_pcb = findPCB(pid);
+        if (!sig_pcb) { p->ret = -33; break; }
+         
         p->ret = signal(pid, sig);
-
-        // if pid pcb was waiting, ready it
+        
+        if (sig_pcb->state == STATE_WAIT) { ready(sig_pcb); }
         break;
       case( SYS_SIGRETURN ):
         ap = (va_list) p->args;

@@ -18,6 +18,8 @@ void sigtramp(void (*handler)(void *), void *cntx, void *osp) {
  *         -2 if signal is invalid
  */
 int signal(int pid, int sig_no) {
+  pcb * p = findPCB(pid);
+
 
 }
 
