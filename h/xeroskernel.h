@@ -42,6 +42,7 @@ unsigned char inb(unsigned int);
 #define STATE_STOPPED   0
 #define STATE_READY     1
 #define STATE_SLEEP     2
+#define STATE_WAIT      3
 
 #define SYS_STOP        0
 #define SYS_YIELD       1
