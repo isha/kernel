@@ -84,6 +84,7 @@ struct struct_pcb {
   int         sleepdiff;
   long        args;
   struct devsw* fdtab[FDTAB_SIZE]; //add var later
+  void *      signal_table[32];
 };
 
 extern pcb     proctab[MAX_PROC];
