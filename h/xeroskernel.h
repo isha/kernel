@@ -55,6 +55,11 @@ unsigned char inb(unsigned int);
 #define SYS_DEV_READ	14
 #define SYS_DEV_IOCTL	15
 
+#define DEV_NUM 	2
+#define KEYBOARD 	0
+#define KEYBOARD	1
+
+#define FDTAB_SIZE	4
 
 typedef void    (*funcptr)(void);
 
@@ -71,7 +76,7 @@ struct struct_pcb {
   int         ret;
   int         sleepdiff;
   long        args;
-
+  int	      fdtab[FDTAB_SIZE]; //add var later
 };
 
 extern pcb     proctab[MAX_PROC];
@@ -92,6 +97,21 @@ typedef struct context_frame {
   unsigned int        stackSlots[0];
 } context_frame;
 
+
+//stuff for devices
+
+struct devsw {
+	int dvnum;
+	char *dvname;
+	int (*dvinit) ();
+	int (*dvclose) ();
+	int (*dvread) ();
+	int (*dvwrite) ();
+	int (*dvioctl) ();
+	int dvminor;
+};
+
+struct devsw devtab[DEV_NUM];
 extern pcb      proctab[MAX_PROC];
 
 extern void kmeminit(void);
@@ -129,3 +149,9 @@ unsigned  int sysclose(int fd);
 unsigned int syswrite(int fd, void *buff, int bufflen);
 unsigned int sysread(int fd, void *buff, int bufflen);
 unsigned int sysioctl(int fd, unsigned long command, ...);
+
+extern int  di_open(int dev_no);
+extern void di_close(int dev_no);
+extern void di_write(int fd, void *buff, int buflen);
+extern void di_read(int fd, void *buff, int buflen);
+extern void di_ioctl(int fd, unsigned long command);
