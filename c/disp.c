@@ -69,32 +69,32 @@ void     dispatch( void ) {
       case ( SYS_DEV_OPEN ) :
 	ap = (va_list)p->args;
  	dev_no = va_arg(ap, int);
-	p->ret = di_open(dev_no);
+	p->ret = di_open(dev_no, p);
 	break;
       case ( SYS_DEV_CLOSE) :
 	ap = (va_list)p->args;
-	dev_no = va_arg(ap, int);
-	di_close(dev_no);
+	fd = va_arg(ap, int);
+	di_close(fd, p);
 	break;
       case ( SYS_DEV_WRITE) :
 	ap = (va_list)p->args;
 	fd = va_arg(ap, int);
 	buf = va_arg(ap, void *);
 	len = va_arg(ap, int);
-	di_write(fd, buf, len);
+	di_write(fd, buf, len, p);
 	break;
       case ( SYS_DEV_READ) :
 	ap = (va_list)p->args;
 	fd = va_arg(ap, int);
 	buf = va_arg(ap, void *);
 	len = va_arg(ap, int);
-	di_read(fd, buf, len);
+	di_read(fd, buf, len, p);
 	break;
       case (SYS_DEV_IOCTL) :
 	ap = (va_list)p->args;
 	fd = va_arg(ap, int);
 	command = va_arg(ap, unsigned long);
-	di_ioctl(fd, command);
+	di_ioctl(fd, command, p);
 
 	break;
       default:

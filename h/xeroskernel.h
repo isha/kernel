@@ -57,7 +57,7 @@ unsigned char inb(unsigned int);
 
 #define DEV_NUM 	2
 #define KEYBOARD 	0
-#define KEYBOARD	1
+#define KEYBOARDPRINT	1
 
 #define FDTAB_SIZE	4
 
@@ -76,7 +76,7 @@ struct struct_pcb {
   int         ret;
   int         sleepdiff;
   long        args;
-  int	      fdtab[FDTAB_SIZE]; //add var later
+  struct devsw* fdtab[FDTAB_SIZE]; //add var later
 };
 
 extern pcb     proctab[MAX_PROC];
@@ -150,8 +150,8 @@ unsigned int syswrite(int fd, void *buff, int bufflen);
 unsigned int sysread(int fd, void *buff, int bufflen);
 unsigned int sysioctl(int fd, unsigned long command, ...);
 
-extern int  di_open(int dev_no);
-extern void di_close(int dev_no);
-extern void di_write(int fd, void *buff, int buflen);
-extern void di_read(int fd, void *buff, int buflen);
-extern void di_ioctl(int fd, unsigned long command);
+extern int  di_open(int dev_no, pcb *p);
+extern void di_close(int fd, pcb *p);
+extern void di_write(int fd, void *buff, int buflen, pcb *p);
+extern void di_read(int fd, void *buff, int buflen, pcb *p);
+extern void di_ioctl(int fd, unsigned long command, pcb *p);
