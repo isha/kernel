@@ -57,7 +57,7 @@ unsigned char inb(unsigned int);
 
 #define DEV_NUM 	2
 #define KEYBOARD 	0
-#define KEYBOARDPRINT	1
+#define KEYBOARDECHO	1
 
 #define FDTAB_SIZE	4
 
@@ -109,6 +109,7 @@ struct devsw {
 	int (*dvwrite) ();
 	int (*dvioctl) ();
 	int dvminor;
+	int inuse;
 };
 
 struct devsw devtab[DEV_NUM];
@@ -151,7 +152,7 @@ unsigned int sysread(int fd, void *buff, int bufflen);
 unsigned int sysioctl(int fd, unsigned long command, ...);
 
 extern int  di_open(int dev_no, pcb *p);
-extern void di_close(int fd, pcb *p);
-extern void di_write(int fd, void *buff, int buflen, pcb *p);
-extern void di_read(int fd, void *buff, int buflen, pcb *p);
-extern void di_ioctl(int fd, unsigned long command, pcb *p);
+extern int di_close(int fd, pcb *p);
+extern int di_write(int fd, void *buff, int buflen, pcb *p);
+extern int di_read(int fd, void *buff, int buflen, pcb *p);
+extern int di_ioctl(int fd, unsigned long command, pcb *p);
