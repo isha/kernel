@@ -83,6 +83,7 @@ unsigned int sysread(int fd, void *buff, int bufflen) {
 
 unsigned int sysioctl(int fd, unsigned long command, ...) {
 	return syscall(SYS_DEV_IOCTL, command);
+}
 
 /* Sets the provided newhandler method as handler for indicated signal 
  *  Return 0 on success

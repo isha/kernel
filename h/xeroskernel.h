@@ -147,6 +147,8 @@ extern void     root( void );
 void printCF (void * stack);
 
 
+void service_signals( pcb *);
+
 /* System Calls - probably should be in a different .h file */
 
 int syscall(int call, ...);
@@ -178,5 +180,3 @@ typedef struct signal_stack {
     unsigned int esp;
     unsigned int old_sp;
 }signal_stack;
-
-void service_signals( pcb *);
