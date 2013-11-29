@@ -1,0 +1,5 @@
+for the device drivers, open, close, and ioctl work.
+
+It's just that I couldn't figure out how to copy the buffers in read.
+I tried using a similar method as to the one in assignment two, but it didn't work. 
+So we commented out the code that calls sysread() in user.c
