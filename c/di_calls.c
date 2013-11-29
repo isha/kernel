@@ -79,10 +79,12 @@ int di_write(int fd, void *buff, int buflen, pcb *p) {
  *Reads from the device buffer by calling the device specific function
  * returns -1 if the fd is invalid.
  */
-int di_read(int fd, void *buff, int buflen, pcb *p) {
+int di_read(int fd, char *buff, int buflen, pcb *p) {
+	sysputs("Place one \n");
 	if (p->fdtab[fd] == NULL) return -1;
-	
+	kprintf("address of buffer is %d \n", &buff);	
 	int return_val = (p->fdtab[fd]->dvread)(buff, buflen);
+	sysputs("Place two \n");
 	return return_val;
 }
 /*

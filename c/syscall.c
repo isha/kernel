@@ -96,7 +96,7 @@ unsigned int syswrite(int fd, void *buff, int bufflen) {
  * returns -1 if fd is invalid.
  * returns 0 on success
  */
-unsigned int sysread(int fd, void *buff, int bufflen) {
+unsigned int sysread(int fd, char *buff, int bufflen) {
 	return syscall(SYS_DEV_READ, buff, bufflen);
 }
 /* sends special control information as a long int to the device.

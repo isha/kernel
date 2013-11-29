@@ -160,13 +160,13 @@ unsigned int syssleep( unsigned int t );
 unsigned int sysopen(int device_no);
 unsigned  int sysclose(int fd);
 unsigned int syswrite(int fd, void *buff, int bufflen);
-unsigned int sysread(int fd, void *buff, int bufflen);
+unsigned int sysread(int fd, char *buff, int bufflen);
 unsigned int sysioctl(int fd, unsigned long command, ...);
 
 extern int  di_open(int dev_no, pcb *p);
 extern int di_close(int fd, pcb *p);
 extern int di_write(int fd, void *buff, int buflen, pcb *p);
-extern int di_read(int fd, void *buff, int buflen, pcb *p);
+extern int di_read(int fd, char *buff, int buflen, pcb *p);
 extern int di_ioctl(int fd, unsigned long command, pcb *p);
 
 extern unsigned int kbtoa(unsigned char);

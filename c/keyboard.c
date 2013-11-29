@@ -34,9 +34,9 @@ unsigned int keyboard_close(void) {
  * if buffer has items in it, put the next item in the char, and return  1.
  * move everything in the buffer over to maintain order. e
  */
-unsigned int keyboard_read(void *buf, int len) {
+unsigned int keyboard_read(char *buf, int len) {
 	int buf_empty = 5; //a number bigger than what we have
-	unsigned int *ret_val; //this value will be returned. 
+	char *ret_val; //this value will be returned. 
 //check to see if the buffer is empty
 	for(keyboard_it = 0; keyboard_it < 4; keyboard_it++) {
 		if (keyboard_buf[keyboard_it] != 0) {

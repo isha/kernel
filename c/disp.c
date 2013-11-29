@@ -88,11 +88,13 @@ void     dispatch( void ) {
 	      p->ret = di_write(fd, buf, len, p);
 	      break;
       case ( SYS_DEV_READ) :
+	      sysputs("place 4");
 	      ap = (va_list)p->args;
 	      fd = va_arg(ap, int);
-	      buf = va_arg(ap, void *);
+	      buf = va_arg(ap, char *);
 	      len = va_arg(ap, int);
 	      p->ret = di_read(fd, buf, len, p);
+	      sysputs("place 5");
 	      break;
       case (SYS_DEV_IOCTL) :
 	      ap = (va_list)p->args;
