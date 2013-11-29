@@ -108,8 +108,7 @@ typedef struct context_frame {
 } context_frame;
 
 
-//stuff for devices
-
+//a struct for a device
 struct devsw {
 	int dvnum;
 	char *dvname;
@@ -121,7 +120,7 @@ struct devsw {
 	int dvminor;
 	int inuse;
 };
-
+//the device table withall devices.
 struct devsw devtab[DEV_NUM];
 extern pcb      proctab[MAX_PROC];
 

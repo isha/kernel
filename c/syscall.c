@@ -64,23 +64,44 @@ unsigned int syssleep( unsigned int t ) {
 
     return syscall( SYS_SLEEP, t );
 }
-
+/*
+ * Opens a device based upon device number.
+ * Returns the File Decriptor if successful.
+ * If it fails, returns -1 if thee process has no applicable FD, -2 if the device does not exist, -3 if the device is already in use. 
+ */
 unsigned int sysopen (int device_no ) {
 	return syscall( SYS_DEV_OPEN, device_no);
 }
 
+/*
+ *takes in an fd, and closes that device file.
+ * returns -1 if the fd is invalid. 
+ * returns 0 on success
+ * ensures both echokeyboard and regular keyboard are closed/
+ */
 unsigned int sysclose (int fd) {
 	return syscall(SYS_DEV_CLOSE, fd);
 }
 
+/*
+ *writes information to the buffer that will be shared with the device.
+ * returns -1 if the fd is invalid.
+ * returns 0 on sucess
+ */
 unsigned int syswrite(int fd, void *buff, int bufflen) {
 	return syscall(SYS_DEV_WRITE, buff, bufflen);
 }
 
+/* reads information from the buffer that is shared from the device.
+ * returns -1 if fd is invalid.
+ * returns 0 on success
+ */
 unsigned int sysread(int fd, void *buff, int bufflen) {
 	return syscall(SYS_DEV_READ, buff, bufflen);
 }
-
+/* sends special control information as a long int to the device.
+ * returns -1 if the fd is bad, 0 if the control signal sent is a success
+ */
 unsigned int sysioctl(int fd, unsigned long command, ...) {
 	return syscall(SYS_DEV_IOCTL, command);
 }
