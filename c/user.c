@@ -47,6 +47,16 @@ void consumer( void ) {
     sysstop();
 }
 
+
+void	testKeyboard(void) {
+	int fd = sysopen(KEYBOARDECHO);
+	int *buffer;
+	for(;;) {
+		sysread(fd, buffer, 1);
+		kprintf("%u \n", *buffer);	
+	}
+}
+
 void     root( void ) {
 /****************************/
 
@@ -56,10 +66,12 @@ void     root( void ) {
 
     sysyield();
     sysyield();
-   
+    
+    syscreate(&testKeyboard, 4096);   
     syscreate( &producer, 4096 );
     syscreate( &consumer, 4096 );
     sprintf(buff, "Root finished\n");
     sysputs( buff );
     sysstop();
 }
+

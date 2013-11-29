@@ -36,6 +36,7 @@ unsigned char inb(unsigned int);
 #define MAX_PROC        64
 #define KERNEL_INT      80
 #define TIMER_INT       (TIMER_IRQ + 32)
+#define KEYBOARD_INT	(1 + 32) //Keyboard Int = 1, + 32
 #define PROC_STACK      (4096 * 4)
 
 #define STATE_STOPPED   0
@@ -46,6 +47,7 @@ unsigned char inb(unsigned int);
 #define SYS_YIELD       1
 #define SYS_CREATE      2
 #define SYS_TIMER       3
+#define SYS_KEYBOARD	4
 #define SYS_GETPID      8
 #define SYS_PUTS        9
 #define SYS_SLEEP       10
@@ -103,11 +105,11 @@ typedef struct context_frame {
 struct devsw {
 	int dvnum;
 	char *dvname;
-	int (*dvinit) ();
-	int (*dvclose) ();
-	int (*dvread) ();
-	int (*dvwrite) ();
-	int (*dvioctl) ();
+	unsigned int (*dvinit) (int echo);
+	unsigned int (*dvclose) (void);
+	unsigned int (*dvread) (void *buf, int len);
+	unsigned int (*dvwrite) (void *buf, int len);
+	unsigned int (*dvioctl) (unsigned long command);
 	int dvminor;
 	int inuse;
 };
@@ -156,3 +158,7 @@ extern int di_close(int fd, pcb *p);
 extern int di_write(int fd, void *buff, int buflen, pcb *p);
 extern int di_read(int fd, void *buff, int buflen, pcb *p);
 extern int di_ioctl(int fd, unsigned long command, pcb *p);
+
+extern unsigned int kbtoa(unsigned char);
+extern int keyboard_isr(void);
+extern int keyboard_init(void);

@@ -1,6 +1,5 @@
 /* disp.c : dispatcher
  */
-
 #include <xeroskernel.h>
 #include <i386.h>
 #include <xeroslib.h>
@@ -60,6 +59,9 @@ void     dispatch( void ) {
 	sleep( p, len );
 	p = next();
 	break;
+      case (SYS_KEYBOARD ):
+	keyboard_isr();
+	end_of_intr();
       case( SYS_TIMER ):
 	tick();
 	ready( p );

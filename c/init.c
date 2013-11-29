@@ -57,6 +57,9 @@ void initproc( void )				/* The beginning */
         contextinit();
         kprintf("Context initialized.\n");
 
+	keyboard_init();
+	kprintf("Initializing keyboardi \n");
+
 	kprintf("Creating Idle Process\n");
 	create(idleproc, PROC_STACK);
 

@@ -1,3 +1,5 @@
+#include <xeroskernel.h>
+
 #define KEY_UP   0x80            /* If this bit is on then it is a key   */
                                  /* up event instead of a key down event */
 
@@ -74,7 +76,7 @@ unsigned int kbtoa( unsigned char code )
       state &= ~INSHIFT;
       break;
     case CAPSL:
-      printf("Capslock off detected\n");
+//      printf("Capslock off detected\n");
       state &= ~CAPSLOCK;
       break;
     case LCTL:
@@ -94,11 +96,11 @@ unsigned int kbtoa( unsigned char code )
   case LSHIFT:
   case RSHIFT:
     state |= INSHIFT;
-    printf("shift detected!\n");
+  //  kprintf("shift detected!\n");
     return NOCHAR;
   case CAPSL:
     state |= CAPSLOCK;
-    printf("Capslock ON detected!\n");
+//    printf("Capslock ON detected!\n");
     return NOCHAR;
   case LCTL:
     state |= INCTL;
@@ -137,10 +139,12 @@ unsigned int kbtoa( unsigned char code )
   return ch;
 }
 
-
-main() {
+/*
+void keyboard_main() {
   kbtoa(LSHIFT);
   printf("45 = %c\n", kbtoa(45));
   kbtoa(LSHIFT | KEY_UP);
   printf("45 = %c\n", kbtoa(45));
-}
+} 
+
+*/
