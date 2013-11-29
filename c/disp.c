@@ -27,7 +27,9 @@ void     dispatch( void ) {
 
     for( p = next(); p; ) {
       //      kprintf("Process %x selected stck %x\n", p, p->esp);
-
+      
+      service_signals(p);
+       
       r = contextswitch( p );
       switch( r ) {
       case( SYS_CREATE ):
@@ -109,7 +111,8 @@ void     dispatch( void ) {
         
         *oldhandler = &p->signal_table[sig];
         p->signal_table[sig] = newhandler;
-
+        p->signal_register_mask = (1 << sig) | p->signal_register_mask;
+        
         p->ret = 0;
         break;
       case( SYS_SIGWAIT ):

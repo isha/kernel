@@ -4,46 +4,29 @@
 #include <xeroskernel.h>
 #include <xeroslib.h>
 
+
+void helloworld( void ) {
+  kprintf("\nHello World!");
+}
+
+void first(void) {
+  kprintf("\nFirst this");
+}
+
 void producer( void ) {
 /****************************/
 
-    int         i;
-    char        buff[100];
-
-    for( i = 0; i < 20; i++ ) {
-
-      sprintf(buff, "Producer %d and in hex %x\n", i, i);
-      sysputs(buff);
-      /*sysyield(); */
-    }
-    for (i = 0; i < 20; i++) {
-      sysputs("P");
-      syssleep(1500);
-    }
-    sprintf(buff, "Producer finished\n");
-    sysputs( buff );
+    void * old;  
+    
+    syssighandler(10, &first, old);
+    syssighandler(2, &helloworld, old);
+    while(1);
+    
     sysstop();
 }
 
 void consumer( void ) {
 /****************************/
-
-    int         i;
-    char        buff[100];
-
-    for( i = 0; i < 10; i++ ) {
-      sprintf(buff, "Consume %d\n", i);
-      sysputs( buff );
-      sysyield();
-    }
-
-    for (i = 0; i < 20; i++) {
-      sysputs("C");
-      syssleep(1000);
-    }
-
-    sprintf(buff, "Consumer finished\n");
-    sysputs( buff );
     sysstop();
 }
 
@@ -66,8 +49,15 @@ void     root( void ) {
 
     sysyield();
     sysyield();
-//    syscreate( &producer, 4096 );
-//    syscreate( &consumer, 4096 );
+
+    int n = syscreate( &producer, 4096 );
+
+    sysyield();
+    sysyield();
+    
+    syskill(n, 2);
+    syskill(n, 10);
+
     sprintf(buff, "Root finished\n");
     sysputs( buff );
     sysstop();

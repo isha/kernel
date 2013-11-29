@@ -85,6 +85,8 @@ struct struct_pcb {
   long        args;
   struct devsw* fdtab[FDTAB_SIZE]; //add var later
   void *      signal_table[32];
+  int         signal_register_mask;
+  int         signal_waiting_mask;
 };
 
 extern pcb     proctab[MAX_PROC];
@@ -169,3 +171,12 @@ extern int di_ioctl(int fd, unsigned long command, pcb *p);
 extern unsigned int kbtoa(unsigned char);
 extern int keyboard_isr(void);
 extern int keyboard_init(void);
+
+typedef struct signal_stack {
+    unsigned int ret;
+    void * handler;
+    unsigned int esp;
+    unsigned int old_sp;
+}signal_stack;
+
+void service_signals( pcb *);
