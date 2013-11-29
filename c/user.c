@@ -13,21 +13,32 @@ void first(void) {
   kprintf("\nFirst this");
 }
 
-void producer( void ) {
-/****************************/
-
-    void * old;  
-    
-    syssighandler(10, &first, old);
-    syssighandler(2, &helloworld, old);
-    while(1);
-    
+void process_a( void ) {
+    syssleep(1000);
+    syskill(2, 20);
+    syskill(2, 18);
     sysstop();
 }
 
-void consumer( void ) {
-/****************************/
-    sysstop();
+void process_b(void) {
+  syssleep(5000);
+  syskill(2, 18);
+  sysstop();
+}
+
+void process_c(void) {
+  syssleep(5000);
+  syskill(2, 20);
+  sysstop();
+}
+
+
+void root_handler (void) {
+  sysputs("\nIn root handler");
+}
+
+void root_second_handler (void) {
+  sysputs("\nIn second handler for root");
 }
 
 
@@ -44,22 +55,72 @@ void     root( void ) {
 /****************************/
 
 
-    char  buff[100];
-    sysputs("Root has been called\n");
+    char  buff[100]; int rc; void (** old) (void *);
 
-    sysyield();
-    sysyield();
+    sysputs("\nStep 1: Greeting");
 
-    int n = syscreate( &producer, 4096 );
+    sysputs("\nStep 2: Open echo keyboard");
 
-    sysyield();
-    sysyield();
+    sysputs("\nStep 3: Read chars one at a time till 10");
+
+    sysputs("\nStep 4: Open no echo keyboard");
+
+    sysputs("\nStep 5: Open echo keyboard");
+
+    sysputs("\nStep 6: Close keyboard");
+
+    sysputs("\nStep 7: Open no echo keyboard");
+
+    sysputs("\nStep 8: 3 reads of 10 chars");
+
+    sysputs("\nStep 9: Continue reading until EOF");
+
+    sysputs("\nStep 10: Close keyboard and open echo");
+
+    sysputs("\nStep 11: Install sighandler for 18");
+      rc = syssighandler(18, &root_handler, old);
+      sprintf(buff, "\nInstalled syshandler for root (pid %d), return code %d, old handler %d", sysgetpid(), rc, *old);
+      sysputs(buff);
     
-    syskill(n, 2);
-    syskill(n, 10);
+    sysputs("\nStep 12: Create process");    
+      syscreate( &process_a, 4096 );
 
-    sprintf(buff, "Root finished\n");
-    sysputs( buff );
+    sysputs("\nStep 13: Do a read");
+
+    sysputs("\nStep 14: Previous read interrupted by signal");
+
+    sysputs("\nStep 15: Create process");
+      syscreate(&process_b, 4096);
+ 
+    sysputs("\nStep 16: Install second sighandler for 18");
+      rc = syssighandler(18, &root_second_handler, old);
+      sprintf(buff, "\nInstalled syshandler for root (pid %d), return code %d, old handler %d", sysgetpid(), rc, *old);
+      sysputs(buff);
+   
+    sysputs("\nStep 17: Do another read");
+    
+    sysputs("\nStep 18: Previous read interrupted by signal");
+    
+    sysputs("\nStep 19: Install handler for 20 (which was old 18 handler)");
+      void * h = *old;
+      rc = syssighandler(20, h, old);
+      sprintf(buff, "\nInstalled syshandler for root (pid %d), return code %d, old handler %d", sysgetpid(), rc, *old);
+      sysputs(buff);
+       
+    sysputs("\nStep 20: Create process");
+      syscreate(&process_c, 4096);
+      
+    sysputs("\nStep 21: Do another read"); 
+
+    sysputs("\nStep 22: Previous read interrupted by signal");
+
+    sysputs("\nStep 23: Read until EOF");
+
+    sysputs("\nStep 24: Read again");
+    
+    sysputs("\nStep 25: Termination and exit");
+
+    while(1);   
     sysstop();
 }
 

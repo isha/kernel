@@ -39,9 +39,9 @@ int signal(int pid, int sig_no) {
  */
 void service_signals(pcb * p) {
   int mask = p->signal_waiting_mask & p->signal_register_mask;
-
+  
   if (mask) {
-
+    
     /* Find highest set bit */
     int sig_no = 0;
     while (mask != 0) { sig_no++; mask = mask >> 1; }

@@ -109,10 +109,10 @@ void     dispatch( void ) {
         void * newhandler = (void *) (va_arg(ap, unsigned int)); 
         void ** oldhandler = (void *) (va_arg(ap, unsigned int*));
         
-        *oldhandler = &p->signal_table[sig];
+        *oldhandler = p->signal_table[sig];
+
         p->signal_table[sig] = newhandler;
-        p->signal_register_mask = (1 << sig) | p->signal_register_mask;
-        
+        p->signal_register_mask |= 1 << sig;
         p->ret = 0;
         break;
       case( SYS_SIGWAIT ):
