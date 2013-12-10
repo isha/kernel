@@ -3,6 +3,7 @@
 
 #include <xeroskernel.h>
 
+/* Process IDs are starting from 1, and always incrementing */
 static int NextPID = 1;
 
 /* Creates a process and initializes stack for it */

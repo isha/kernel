@@ -4,10 +4,9 @@
 #include <xeroskernel.h>
 #include <i386.h>
 
-/* Place holder for entry point into kernel from interrupt */
 void _common_entry_point(void);
-void _timer_entry_point(void);
-void _kernel_entry_point(void);
+void _timer_entry_point(void); // Placeholder for entry from timer interrupt
+void _kernel_entry_point(void); // PLaceholder for entry from a system call
 
 /* Initialize interrupt handler */
 extern void contextinit(void) {

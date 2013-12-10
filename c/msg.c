@@ -3,17 +3,24 @@
 
 #include <xeroskernel.h>
 
-/* Return PCB for requested pid if found in the ready queue */
+/* Return PCB for requested pid if found in the ready or blocked queues */
 PCB * get_process (unsigned int pid) {
   PCB * process = ReadyQueue;
-
-  while (process != NULL) {
-    if (process->pid == pid) return process;
+  while (process != NULL && process->pid != pid) {
     process = process->next;
   }
+  if (process->pid == pid) return process;
+  
+  process = BlockedQueue;
+  while (process != NULL && process->pid != pid) {
+    process = process->next;
+  }
+  if (process->pid == pid) return process;
+  
   return NULL;
 }
 
+/* Adds a PCB to a queue */
 PCB * add_to_queue(PCB * queue, PCB * pcb) {
   PCB * current = queue;
   if (current == NULL) return pcb;
@@ -23,6 +30,7 @@ PCB * add_to_queue(PCB * queue, PCB * pcb) {
   return queue;
 }
 
+/* Remove a PCB from a queue */
 PCB * remove_from_queue(PCB * queue, PCB * pcb) {
   PCB * current = queue; PCB * prev = NULL;
   while (current != NULL && current != pcb) {
@@ -59,9 +67,9 @@ int send(PCB * process, unsigned int dest_pid, void * buffer, int buffer_len) {
   process->message_buffer.pid = dest_pcb->pid;
   process->message_buffer.address = buffer;
   process->message_buffer.size = buffer_len;
-  process->state = BLOCKED;
+  block(process);
   dest_pcb->message_queue = add_to_queue(dest_pcb->message_queue, process); 
-  return OTHER_IPC_ERROR;
+  return IPC_BLOCKED;
 }
 
 int recv(PCB * process, unsigned int * from_pid, void * buffer, int buffer_len) {
@@ -86,9 +94,8 @@ int recv(PCB * process, unsigned int * from_pid, void * buffer, int buffer_len) 
 
   process->message_buffer.address = buffer;
   process->message_buffer.size = buffer_len;
-  process->state = BLOCKED;
-
-  return OTHER_IPC_ERROR;
+  block(process);
+  return IPC_BLOCKED;
 }
 
 

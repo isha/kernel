@@ -4,8 +4,9 @@
 #include <xeroskernel.h>
 #include <stdarg.h>
 
-/* Pointer to first PCB in the Ready queue linked list */
+/* Pointer to first PCB in the Ready and Blocked queues linked list */
 PCB * ReadyQueue;
+PCB * BlockedQueue;
 
 /* Adds specified PCB to the ready queue or creates a queue if doesnt exist */
 void ready(PCB * pcb) {
@@ -23,11 +24,32 @@ void ready(PCB * pcb) {
   pcb->state = READY;
 }
 
+/* Adds specified PCB to the blocked queue or creates a queue if doesnt exist */
+void block(PCB * pcb) {
+  PCB * p;
+
+  if (BlockedQueue) {
+    p = BlockedQueue;
+    while (p->next != NULL) p = p->next;
+    p->next = pcb;
+  } else {
+    BlockedQueue = pcb;
+  }
+
+  pcb->next = NULL;
+  pcb->state = BLOCKED;
+}
+
 /* Removes and returns a PCB from the ready queue */
 PCB * next() {
   if (ReadyQueue) {
     PCB * next_ready = ReadyQueue;
     ReadyQueue = ReadyQueue->next;
+    
+    if (next_ready->pid == IDLE_PROC_PID && ReadyQueue != NULL) {
+      ready(next_ready);
+      next_ready = next();
+    }
     return next_ready;
   } else return NULL;
 }
@@ -82,6 +104,10 @@ extern void dispatch() {
         void * buff = va_arg(ap, void *);
         int buff_len = va_arg(ap, int);
         process->ret = send(process, dest_pid, buff, buff_len);
+
+        if (process->ret == IPC_BLOCKED) {
+          process = next();
+        }
         break;
       }
       case RECV:
@@ -91,6 +117,10 @@ extern void dispatch() {
         void * buff = va_arg(ap, void *);
         int buff_len = va_arg(ap, int);
         process->ret = recv(process, from_pid, buff, buff_len);
+        
+        if (process->ret == IPC_BLOCKED) {
+          process = next();
+        }
         break;
       }
       case SLEEP:

@@ -37,6 +37,7 @@ extern void kmeminit( void );
 extern void *kmalloc( int );
 extern void kfree( void *);
 
+/* Different states that a process can be in */
 typedef enum {
   READY,
   BLOCKED,
@@ -45,12 +46,14 @@ typedef enum {
   SLEEPING
 } ProcessState;
 
+/* Message buffer associated with a process */
 typedef struct {
   unsigned int pid;
   void * address;
   unsigned int size;
 } MessageBuffer;
 
+/* Process control block structure */
 typedef struct {
   int pid;
   ProcessState state;
@@ -64,20 +67,15 @@ typedef struct {
   int sleep_counter;
 } PCB;
 
+/* Queues to keep track of the ready and blocked processes */
 extern PCB * ReadyQueue;
+extern PCB * BlockedQueue;
 
-typedef enum {
-  CREATE = 0,
-  YIELD =  1,
-  STOP = 2,
-  GET_PID = 3,
-  PUTS = 4,
-  SEND = 5,
-  RECV = 6,
-  TIMER_INT = 7,
-  SLEEP = 8
-} RequestType;
+/* Handlers for the above queues */
+extern void ready(PCB *);
+extern void block(PCB *);
 
+/* Context frame structure used to initialize a new process' stack */
 typedef struct {
   unsigned int edi;
   unsigned int esi;
@@ -92,25 +90,45 @@ typedef struct {
   unsigned int eflags;
 } ContextFrame;
 
-extern void ready(PCB *);
+/* Types of requests to the cpu */
+typedef enum {
+  CREATE = 0,
+  YIELD =  1,
+  STOP = 2,
+  GET_PID = 3,
+  PUTS = 4,
+  SEND = 5,
+  RECV = 6,
+  TIMER_INT = 7,
+  SLEEP = 8
+} RequestType;
+
+
 extern void dispatch();
+
+/* System calls */
 extern int syscall(RequestType call, ... );
 extern int syscreate (void (*func)(), int stack);
 extern void sysyield (void);
 extern void sysstop (void);
+extern unsigned int sysgetpid (void);
+extern void sysputs (char *);
+extern int syssend (unsigned int, void *, int);
+extern int sysrecv (unsigned int *, void *, int);
+extern int syssleep (unsigned int);
 
+/* Return value constants for IPC methods */
+#define PROCESS_NOT_FOUND -1
+#define CIRCULAR_IPC_ERROR -2
+#define OTHER_IPC_ERROR -3
+#define IPC_BLOCKED -4
+
+/* Sleeping */
+extern PCB * SleepQueue;
+extern void tick (void);
+extern void sleep (PCB *, unsigned int);
+
+/* User process declarations */
 extern void root (void);
 extern void idleproc (void);
-
-#define CIRCULAR_IPC_ERROR -2
-#define PROCESS_NOT_FOUND -1
-#define OTHER_IPC_ERROR -3
-
-
-
-#define PROCESS_NOT_FOUND -1
-#define CIRCULAR_IPC_ERROR -2
-#define OTHER -3
-#define PROCESS_NOT_FOUND -1
-#define CIRCULAR_IPC_ERROR -2
-#define OTHER -3
+extern unsigned int IDLE_PROC_PID;

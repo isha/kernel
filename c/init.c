@@ -9,6 +9,7 @@ extern  int end( void );    /* end of kernel image, use &end        */
 extern  long  freemem;  /* start of free memory (set in i386.c) */
 extern char *maxaddr; /* max memory address (set in i386.c) */
 
+unsigned int IDLE_PROC_PID;
 /************************************************************************/
 /***        NOTE:             ***/
 /***                      ***/
@@ -38,7 +39,9 @@ void initproc( void )       /* The beginning */
   /* Create root process */
   int pid = create(root, 4096);
   kprintf("\n\nRoot PID = %d", pid);
-  create(idleproc, 256);
+  
+  /* Create idle process */ 
+  IDLE_PROC_PID = create(idleproc, 256);
 
   dispatch();
 
